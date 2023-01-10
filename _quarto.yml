@@ -18,3 +18,6 @@ format:
 
 editor: visual
 
+comments:
+  giscus:
+    repo: MLDavies/data-blog
