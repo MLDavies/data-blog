@@ -4,7 +4,7 @@ project:
 website:
   title: "Michael L. Davies"
   navbar:
-    #background: "#2C3E50"
+    #background: "#dbdbdb"
     right:
       - about.qmd
       - icon: github
