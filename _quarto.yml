@@ -11,6 +11,8 @@ website:
         href: https://github.com/MLDavies/
       - icon: twitter
         href: https://twitter.com/Michael82719108
+      - icon: envelope
+        href: mailto:michael.l.davies@gmail.com
 format:
   html:
     theme: flatly  # ember.scss
