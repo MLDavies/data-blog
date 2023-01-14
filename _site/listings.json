@@ -5,5 +5,14 @@
       "/posts/post-with-code/index.html",
       "/posts/welcome/index.html"
     ]
+  },
+  {
+    "listing": "/blog.html",
+    "items": [
+      "/posts/post-with-code/index.html",
+      "/posts/welcome/index.html",
+      "/posts/series1/new_post/post.html",
+      "/posts/new/new_post.html"
+    ]
   }
 ]
