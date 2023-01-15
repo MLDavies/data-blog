@@ -1,6 +1,6 @@
 ---
-title: "Bad ideas executed with vigor"
-subtitle: A data science blog and other unreasonable choices
+title: "BLOG"
+#subtitle: A data science blog and other unreasonable choices
 listing:
   contents: posts
   sort: "date desc"

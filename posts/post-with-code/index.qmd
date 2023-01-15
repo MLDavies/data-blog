@@ -1,6 +1,7 @@
 ---
 title: "Post With Code"
-author: "Harlow Malloc"
+subtitle: Can I put a subtitle
+#author: "Harlow Malloc"
 date: "2023-01-08"
 categories: [news, code, analysis]
 image: "image.jpg"

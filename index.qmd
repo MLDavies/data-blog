@@ -1,6 +1,8 @@
 ---
-title: "About"
-image: Davies-Michael-square.jpg
+title: "Bad ideas executed with vigor"
+subtitle: A data science blog and other unreasonable choices
+# image: Davies-Michael-square.jpg
+image: Davies_Cartoon_headshot_1b.jpg
 about:
   template: jolla
   links:
