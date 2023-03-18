@@ -1,45 +1,17 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Bad ideas executed with vigor",
-    "section": "",
-    "text": "About this blog"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this blog"
-  },
-  {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
-  },
-  {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "posts/dummy-post/new_post.html",
-    "href": "posts/dummy-post/new_post.html",
-    "title": "Michael L. Davies",
-    "section": "",
-    "text": "---\ntitle: ‘This is a dummy blog posts’\ndate: ‘2022-06-01’\ncategories: [‘123’, ‘Second Tag’]\ndescription: ‘This is a test post. In this post, I try out different functionalities’\nexecute:\nmessage: false\nwarning: false\neditor_options:\nchunk_output_type: console\n---\n# Heading 1\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit est nec dui eleifend, at dictum elit ullamcorper. Aliquam feugiat dictum bibendum. Praesent fermentum laoreet quam, cursus volutpat odio dapibus in. Fusce luctus porttitor vehicula. Donec ac tortor nisi. Donec at lectus tortor. Morbi tempor, nibh non euismod viverra, metus arcu aliquet elit, sed fringilla urna leo vel purus.\n## Merriweather\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit est nec dui eleifend, at dictum elit ullamcorper. **Aliquam feugiat dictum bibendum.** Praesent fermentum laoreet quam, cursus volutpat odio dapibus in. [Fusce luctus](https://github.com/twbs/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/_variables.scss) porttitor vehicula. Donec ac tortor nisi. Donec at lectus tortor. Morbi tempor, nibh non euismod viverra, metus arcu aliquet elit, sed fringilla urna leo vel purus.\n### 3 - Code\nThis is `inline` code plus a small code chunk.\n```{r}\nlibrary(tidyverse)\nggplot(mpg) +\ngeom_jitter(aes(cty, hwy), size = 4, alpha = 0.5)\n```\n### 3 - Tabsets\n```{r, echo = F}\nknitr::opts_chunk$set(collapse = T)\nlibrary(tidyverse)\ndat <- palmerpenguins::penguins %>%\nfilter(!is.na(sex))\nlm.mod <- dat %>%\nmutate(\nsex = if_else(sex == ‘male’, 1, 0),\n) %>%\nlm(data = ., sex ~ body_mass_g + bill_length_mm + species)\npreds_lm <- dat %>%\nmutate(\nprob.fit = plogis(lm.mod$fitted.values),\nprediction = if_else(prob.fit > 0.5, ‘male’, ‘female’),\ncorrect = if_else(sex == prediction, ‘correct’, ‘incorrect’)\n)\n```\n\n### Transforming OLS estimates\n```{r}\n#| code-fold: true\npreds_lm %>%\nggplot(aes(body_mass_g, bill_length_mm, col = correct)) +\ngeom_jitter(size = 4, alpha = 0.6) +\nfacet_wrap(vars(species)) +\nscale_color_manual(values = c(‘grey60’, thematic::okabe_ito(3)[3])) +\nscale_x_continuous(breaks = seq(3000, 6000, 1000)) +\ntheme_minimal(base_size = 12) +\ntheme(\nlegend.position = ‘top’,\npanel.background = element_rect(color = ‘black’),\npanel.grid.minor = element_blank()\n) +\nlabs(\nx = ‘Body mass (in g)’,\ny = ‘Bill length (in mm)’\n)\n```\n### Maximizing likelihood\n```{r}\n#| code-fold: true\nglm.mod <- glm(sex ~ body_mass_g + bill_length_mm + species, family = binomial, data = dat)\npreds <- dat %>%\nmutate(\nprob.fit = glm.mod$fitted.values,\nprediction = if_else(prob.fit > 0.5, ‘male’, ‘female’),\ncorrect = if_else(sex == prediction, ‘correct’, ‘incorrect’)\n)\npreds %>%\nggplot(aes(body_mass_g, bill_length_mm, col = correct)) +\ngeom_jitter(size = 4, alpha = 0.6) +\nfacet_wrap(vars(species)) +\nscale_x_continuous(breaks = seq(3000, 6000, 1000)) +\nscale_color_manual(values = c(‘grey60’, thematic::okabe_ito(3)[3])) +\ntheme_minimal(base_size = 10) +\ntheme(\nlegend.position = ‘top’,\npanel.background = element_rect(color = ‘black’),\npanel.grid.minor = element_blank()\n) +\nlabs(\nx = ‘Body mass (in g)’,\ny = ‘Bill length (in mm)’\n)\n```\n\n#### 4 - Some math stuff\n$$\n\\int_0^1 f(x) \\ dx\n$$\n## 2 - Columns\n\n\n\n```{r}\n\n\n#| eval: false\n\n\n\n\n#| echo: true\n\n\ngeom_density(\n\n\n\n\nmapping = NULL,\n\n\ndata = NULL,\n\n\n\n\nstat = “density”,\n\n\nposition = “identity”,\n\n\n\n\n…,\n\n\nna.rm = FALSE,\n\n\n\n\norientation = NA,\n\n\nshow.legend = NA,\n\n\n\n\ninherit.aes = TRUE,\n\n\noutline.type = “upper”\n\n\n\n\n)\n\n\n```\n\n\n\n\n```{r}\n\n\n#| eval: false\n\n\n\n\n#| echo: true\n\n\nstat_density(\n\n\n\n\nmapping = NULL,\n\n\ndata = NULL,\n\n\n\n\ngeom = “area”,\n\n\nposition = “stack”,\n\n\n\n\n…,\n\n\nbw = “nrd0”,\n\n\n\n\nadjust = 1,\n\n\nkernel = “gaussian”,\n\n\n\n\nn = 512,\n\n\ntrim = FALSE,\n\n\n\n\nna.rm = FALSE,\n\n\norientation = NA,\n\n\n\n\nshow.legend = NA,\n\n\ninherit.aes = TRUE\n\n\n\n\n)\n\n\n```\n\n\n\n## 2 - Margin captions\n```{r}\n#| fig-cap: “Bla bla bla. This is a caption in the margin. Super cool isn’t it?”\n#| fig-cap-location: margin\nggplot(data = gapminder::gapminder, mapping = aes(x = lifeExp, fill = continent)) +\nstat_density(position = “identity”, alpha = 0.5)\n```"
-  },
-  {
     "objectID": "blog.html",
     "href": "blog.html",
     "title": "BLOG",
     "section": "",
     "text": "Post With Code\n\n\nCan I put a subtitle\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nJan 8, 2023\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nJan 5, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDummy post in series\n\n\n\n\n\n\n\n123\n\n\nSecond Tag\n\n\n\n\nThis is a test post for a series\n\n\n\n\n\n\nJun 2, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis is a dummy blog posts\n\n\n\n\n\n\n\n123\n\n\nSecond Tag\n\n\n\n\nThis is a test post. In this post, I try out different functionalities\n\n\n\n\n\n\nJun 1, 2022\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Bad ideas executed with vigor",
+    "section": "",
+    "text": "About this blog"
   },
   {
     "objectID": "posts/new/new_post.html",
@@ -49,10 +21,24 @@
     "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit est nec dui eleifend, at dictum elit ullamcorper. Aliquam feugiat dictum bibendum. Praesent fermentum laoreet quam, cursus volutpat odio dapibus in. Fusce luctus porttitor vehicula. Donec ac tortor nisi. Donec at lectus tortor. Morbi tempor, nibh non euismod viverra, metus arcu aliquet elit, sed fringilla urna leo vel purus.\n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit est nec dui eleifend, at dictum elit ullamcorper. Aliquam feugiat dictum bibendum. Praesent fermentum laoreet quam, cursus volutpat odio dapibus in. Fusce luctus porttitor vehicula. Donec ac tortor nisi. Donec at lectus tortor. Morbi tempor, nibh non euismod viverra, metus arcu aliquet elit, sed fringilla urna leo vel purus.\n\n\nThis is inline code plus a small code chunk.\n\nlibrary(tidyverse)\n\nggplot(mpg) +\n  geom_jitter(aes(cty, hwy), size = 4, alpha = 0.5) \n\n\n\n\n\n\n\n\n\n\n\nTransforming OLS estimatesMaximizing likelihood\n\n\n\n\nCode\npreds_lm %>% \n  ggplot(aes(body_mass_g, bill_length_mm, col = correct)) +\n  geom_jitter(size = 4, alpha = 0.6) +\n  facet_wrap(vars(species)) +\n  scale_color_manual(values = c('grey60', thematic::okabe_ito(3)[3])) +\n  scale_x_continuous(breaks = seq(3000, 6000, 1000)) +\n  theme_minimal(base_size = 12) +\n  theme(\n    legend.position = 'top', \n    panel.background = element_rect(color = 'black'),\n    panel.grid.minor = element_blank()\n  ) +\n  labs(\n    x = 'Body mass (in g)',\n    y = 'Bill length (in mm)'\n  )\n\n\n\n\n\n\n\n\n\nCode\nglm.mod <- glm(sex ~ body_mass_g + bill_length_mm + species, family = binomial, data = dat)\n\npreds <- dat %>% \n  mutate(\n    prob.fit = glm.mod$fitted.values,\n    prediction = if_else(prob.fit > 0.5, 'male', 'female'),\n    correct = if_else(sex == prediction, 'correct', 'incorrect')\n  )\n\n\npreds %>% \n  ggplot(aes(body_mass_g, bill_length_mm, col = correct)) +\n  geom_jitter(size = 4, alpha = 0.6) +\n  facet_wrap(vars(species)) +\n  scale_x_continuous(breaks = seq(3000, 6000, 1000)) +\n  scale_color_manual(values = c('grey60', thematic::okabe_ito(3)[3])) +\n  theme_minimal(base_size = 10) +\n  theme(\n    legend.position = 'top', \n    panel.background = element_rect(color = 'black'),\n    panel.grid.minor = element_blank()\n  ) +\n  labs(\n    x = 'Body mass (in g)',\n    y = 'Bill length (in mm)'\n  )\n\n\n\n\n\n\n\n\n\n\n\\[\n\\int_0^1 f(x) \\ dx\n\\]\n\n\n\n\n\n\n\n\ngeom_density(\n  mapping = NULL,\n  data = NULL,\n  stat = \"density\",\n  position = \"identity\",\n  ...,\n  na.rm = FALSE,\n  orientation = NA,\n  show.legend = NA,\n  inherit.aes = TRUE,\n  outline.type = \"upper\"\n)\n\n\nstat_density(\n  mapping = NULL,\n  data = NULL,\n  geom = \"area\",\n  position = \"stack\",\n  ...,\n  bw = \"nrd0\",\n  adjust = 1,\n  kernel = \"gaussian\",\n  n = 512,\n  trim = FALSE,\n  na.rm = FALSE,\n  orientation = NA,\n  show.legend = NA,\n  inherit.aes = TRUE\n)\n\n\n\n\n\n\n\nggplot(data = gapminder::gapminder, mapping = aes(x = lifeExp, fill = continent)) +\n  stat_density(position = \"identity\", alpha = 0.5)\n\n\n\n\nBla bla bla. This is a caption in the margin. Super cool isn’t it?"
   },
   {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  },
+  {
     "objectID": "posts/series1/new_post/post.html",
     "href": "posts/series1/new_post/post.html",
     "title": "Dummy post in series",
     "section": "",
     "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit est nec dui eleifend, at dictum elit ullamcorper. Aliquam feugiat dictum bibendum. Praesent fermentum laoreet quam, cursus volutpat odio dapibus in. Fusce luctus porttitor vehicula. Donec ac tortor nisi. Donec at lectus tortor. Morbi tempor, nibh non euismod viverra, metus arcu aliquet elit, sed fringilla urna leo vel purus.\n\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit est nec dui eleifend, at dictum elit ullamcorper. Aliquam feugiat dictum bibendum. Praesent fermentum laoreet quam, cursus volutpat odio dapibus in. Fusce luctus porttitor vehicula. Donec ac tortor nisi. Donec at lectus tortor. Morbi tempor, nibh non euismod viverra, metus arcu aliquet elit, sed fringilla urna leo vel purus.\n\n\nThis is inline code plus a small code chunk.\n\nlibrary(tidyverse)\n\nggplot(mpg) +\n  geom_jitter(aes(cty, hwy), size = 4, alpha = 0.5) \n\n\n\n\n\n\n\n\n\n\n\nTransforming OLS estimatesMaximizing likelihood\n\n\n\n\nCode\npreds_lm %>% \n  ggplot(aes(body_mass_g, bill_length_mm, col = correct)) +\n  geom_jitter(size = 4, alpha = 0.6) +\n  facet_wrap(vars(species)) +\n  scale_color_manual(values = c('grey60', thematic::okabe_ito(3)[3])) +\n  scale_x_continuous(breaks = seq(3000, 6000, 1000)) +\n  theme_minimal(base_size = 12) +\n  theme(\n    legend.position = 'top', \n    panel.background = element_rect(color = 'black'),\n    panel.grid.minor = element_blank()\n  ) +\n  labs(\n    x = 'Body mass (in g)',\n    y = 'Bill length (in mm)'\n  )\n\n\n\n\n\n\n\n\n\nCode\nglm.mod <- glm(sex ~ body_mass_g + bill_length_mm + species, family = binomial, data = dat)\n\npreds <- dat %>% \n  mutate(\n    prob.fit = glm.mod$fitted.values,\n    prediction = if_else(prob.fit > 0.5, 'male', 'female'),\n    correct = if_else(sex == prediction, 'correct', 'incorrect')\n  )\n\n\npreds %>% \n  ggplot(aes(body_mass_g, bill_length_mm, col = correct)) +\n  geom_jitter(size = 4, alpha = 0.6) +\n  facet_wrap(vars(species)) +\n  scale_x_continuous(breaks = seq(3000, 6000, 1000)) +\n  scale_color_manual(values = c('grey60', thematic::okabe_ito(3)[3])) +\n  theme_minimal(base_size = 10) +\n  theme(\n    legend.position = 'top', \n    panel.background = element_rect(color = 'black'),\n    panel.grid.minor = element_blank()\n  ) +\n  labs(\n    x = 'Body mass (in g)',\n    y = 'Bill length (in mm)'\n  )\n\n\n\n\n\n\n\n\n\n\n\\[\n\\int_0^1 f(x) \\ dx\n\\]\n\n\n\n\n\n\n\n\ngeom_density(\n  mapping = NULL,\n  data = NULL,\n  stat = \"density\",\n  position = \"identity\",\n  ...,\n  na.rm = FALSE,\n  orientation = NA,\n  show.legend = NA,\n  inherit.aes = TRUE,\n  outline.type = \"upper\"\n)\n\n\nstat_density(\n  mapping = NULL,\n  data = NULL,\n  geom = \"area\",\n  position = \"stack\",\n  ...,\n  bw = \"nrd0\",\n  adjust = 1,\n  kernel = \"gaussian\",\n  n = 512,\n  trim = FALSE,\n  na.rm = FALSE,\n  orientation = NA,\n  show.legend = NA,\n  inherit.aes = TRUE\n)\n\n\n\n\n\n\n\nggplot(data = gapminder::gapminder, mapping = aes(x = lifeExp, fill = continent)) +\n  stat_density(position = \"identity\", alpha = 0.5)\n\n\n\n\nBla bla bla. This is a caption in the margin. Super cool isn’t it?"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   }
 ]

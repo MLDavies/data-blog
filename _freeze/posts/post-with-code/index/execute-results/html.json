@@ -1,8 +1,10 @@
 {
-  "hash": "de7f9f2eb9de978d34d2034ef2913a96",
+  "hash": "a967a6e1f3498762eaa5bf615fccbf24",
   "result": {
-    "markdown": "---\ntitle: \"Post With Code\"\nauthor: \"Harlow Malloc\"\ndate: \"2023-01-08\"\ncategories: [news, code, analysis]\nimage: \"image.jpg\"\n---\n\n\nThis is a post with executable code.\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 2\n```\n:::\n:::\n",
-    "supporting": [],
+    "markdown": "---\ntitle: \"Post With Code\"\nsubtitle: Can I put a subtitle\n#author: \"Harlow Malloc\"\ndate: \"2023-01-08\"\ncategories: [news, code, analysis]\nimage: \"image.jpg\"\n---\n\n\nThis is a post with executable code.\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 2\n```\n:::\n:::\n",
+    "supporting": [
+      "index_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],
