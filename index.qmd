@@ -20,4 +20,13 @@ about:
       href: https://github.com/MLDavies/
 ---
 
-About this blog
+Greetings and salutations, dear reader! Welcome to my humble corner of the internet where I explore the world of data science and the intersections among society, the arts, and conflict. So no, I'm not trying to sell anything, optimize your clicks, or maximize my profits. I’m not so interested in that. I'm just a curious mind with a passion for data, and this blog is my cyber-sandbox.
+
+So who am I, you ask? Well, I'm a former professional dancer turned U.S. Army Reservist turned data scientist, which means my life is a nutty blend of "So You Think You Can Dance" and "Band of Brothers." I've always been intrigued by the complex dynamics and passions of society, and this blog is my way of exploring them through the lens of data science.
+
+Now, let me be clear: I make no claims that my methods or findings will pass academic muster. This is more like stumbling into a dancer's private studio or an artist's workshop (clearly I love mixing metaphors), where I'm free to experiment and explore to my heart's content. I'll do my best to be thoughtful and thorough, but you won't find any peer-reviewed prose here (though let's be honest, that process has taking some heat in recent years anyway).
+
+So poke around. I hope you find something interesting or better yet useful. I'll be sharing the techniques and approaches that fascinate me, as well as delving into the underlying societal and political issues that shape our world. Together, we'll geek out, laugh a little, and hopefully learn something new along the way. Thanks for being here!
+
+
+
