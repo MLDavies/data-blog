@@ -2,7 +2,7 @@
 title: "Proxy Wars - Wiki Scrape"
 author: 
     - "Michael L. Davies"
-date: "`r Sys.Date()`"
+date: "Aug 8, 2023"
 format:
   html:
     embed-resources: true
