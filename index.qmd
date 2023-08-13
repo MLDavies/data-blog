@@ -2,7 +2,7 @@
 title: "Bad ideas executed with vigor"
 subtitle: A data science blog and other unreasonable choices
 # image: Davies-Michael-square.jpg
-image: Davies_Cartoon_headshot_1b.jpg
+image: images/Davies_Cartoon_headshot_1b.jpg
 about:
   template: jolla
   links:
@@ -21,13 +21,13 @@ about:
 ---
 
 ::: justify
-Greetings and salutations, dear reader! Welcome to my humble corner of the internet where I explore the world of data science and the intersections among society, the arts, and conflict. So no, I'm not trying to sell anything, optimize your clicks, or maximize my profits. I'm just a curious mind with a passion for data, and this blog is my data science-sandbox.
+Welcome to my data science-sandbox. I come here to play and explore data, quantitative methods, and the intersections among society, the arts, and conflict. I've always been intrigued by the complex dynamics and passions of society, and this blog is a platform for exploring all that through the lens of data science.
 
-So who am I, you ask? Well, I'm a former professional dancer turned U.S. Army Reservist turned data scientist, which means my life is a nutty blend of "So You Think You Can Dance" and "Band of Brothers." I've always been intrigued by the complex dynamics and passions of society, and this blog is my way of exploring them through the lens of data science.
+I'm a former professional dancer turned U.S. Army Reservist turned data scientist. My life has been a nutty blend of "So You Think You Can Dance", "Band of Brothers" and "Money Ball."
 
-Now, let me be clear: I make no claims that my methods or findings will pass academic muster. This is more like stumbling into a dancer's private studio or an artist's workshop (clearly I love mixing metaphors), where I'm free to practice, experiment and explore. I'll do my best to be thoughtful and thorough, but you won't find any peer-reviewed publications here (though let's be honest, that process has taking some heat in recent years anyway).
+Let me be clear: I make no claims that what I'm doing here would pass academic muster. This is more like stumbling into a private studio or workshop. I do my best to be thoughtful and thorough, but you won't find any peer-reviewed publications here (though let's be honest, that process has taking some heat in recent years anyway).
 
-So poke around. I hope you find something interesting. If you find it useful, steal it. If you have comments or suggestions, I would love to hear them.
+So poke around. I hope you find something interesting. If you find it useful, steal it. If you have comments or suggestions, I would love to hear them. 
 
-I'll be sharing techniques and approaches that fascinate me, as well as delving into the underlying societal and political issues that shape our world. Together, we'll geek out, laugh a little, and hopefully learn something new along the way. Thanks for being here!
+Thanks for being here!
 :::
