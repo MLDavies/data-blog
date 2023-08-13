@@ -30,12 +30,11 @@ execute:
 knitr::include_graphics("proxy_project_vt.jpeg")
 ```
 
-
 ## Proxy wars
 
 Violence, conflict, and proxy warfare -- all on a blissful, dreamy Sunday afternoon. Actually, I was listening to an NPR discussion on an afternoon drive that referenced the work of the [Proxy War Project out of Virginia Tech](https://publishing.vt.edu/site/books/series/pwp-conflict-studies/). As a data geek, the next obvious question is: Gee, where can I find data on that?
 
-I'm not sure how much the general public thinks about the threat of proxy warfare. Is it a rag tag group of thugs funded by a dark agency and left to run around the forest? Or maybe proxy wars are a relic of the cold war? Well, [according to War on the Rocks](https://warontherocks.com/2021/09/the-return-of-great-power-proxy-wars/) (a super cool site on all things war and conflict), "[e]vents of the last decade suggest the increasing salience of such conflicts." The blog goes on to say that "[p]roxy wars are poised to be a...significant factor in the evolving strategic environment."
+I'm not sure how much the general public thinks about the threat of proxy warfare. Is it a rag tag group of thugs funded by a dark agency and left to run around the forest? Or maybe proxy wars are a relic of the cold war? Well, [according to War on the Rocks](https://warontherocks.com/2021/09/the-return-of-great-power-proxy-wars/) (a super cool site on all things war and conflict), "\[e\]vents of the last decade suggest the increasing salience of such conflicts." The blog goes on to say that "\[p\]roxy wars are poised to be a...significant factor in the evolving strategic environment."
 
 So, as soon as I got home, I jumped online for a quick search for some data. The first thing I found [was the Wikipedia page](https://en.wikipedia.org/wiki/List_of_proxy_wars). It most certainly is not the most comprehensive data, but it has a nice feature: A helpful Wiki contributor created a typology of proxy wars. I decided to scrape it to started some initial exploration.
 
