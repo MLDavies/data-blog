@@ -1,15 +1,15 @@
 ---
 title: "Proxy Wars - Wiki Scrape"
-author: 
-    - "Michael L. Davies"
 date: "Aug 8, 2023"
+categories: [scraping, R, combat]
+description: 'Scrape Wikipedia for proxy war data'
 format:
   html:
-    embed-resources: true
+    #embed-resources: true
     code-fold: true
     theme: flatly
     #theme: slate
-    keep-md: true
+    #keep-md: true
 editor: visual
 toc: true
 #number-sections: true
@@ -18,7 +18,8 @@ execute:
   message: false
   error: false
   echo: true
-categories: [news, scraping, R]
+editor_options: 
+  chunk_output_type: console
 image: "proxy_project_vt.jpg"
 ---
 
