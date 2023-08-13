@@ -1,15 +1,5 @@
 [
   {
-    "listing": "/archive.html",
-    "items": [
-      "/posts/proxy-wiki-scrape/index.html",
-      "/posts/post-with-code/index.html",
-      "/posts/welcome/index.html",
-      "/posts/series1/new_post/post.html",
-      "/posts/new/new_post.html"
-    ]
-  },
-  {
     "listing": "/blog.html",
     "items": [
       "/posts/proxy-wiki-scrape/index.html",

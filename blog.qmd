@@ -2,16 +2,21 @@
 title: "BLOG"
 #subtitle: A data science blog and other unreasonable choices
 listing:
-  contents: posts/**/*.qmd
+  #contents: posts/**/*.qmd
+  contents: posts
   sort: "date desc"
   type: default
   categories: true
   sort-ui: true
   filter-ui: true
-  fields: [date, title, reading-time, description, categories]
+  fields: [date, title, reading-time, description, image, categories]
   feed: true
 page-layout: full
 title-block-banner: false
 ---
+
+
+<!-- https://beamilz.com/posts/2022-06-05-creating-a-blog-with-quarto/en/ -->
+
 
 <!-- https://albert-rapp.de/posts/13_quarto_blog_writing_guide/13_quarto_blog_writing_guide.html -->

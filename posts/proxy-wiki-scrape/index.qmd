@@ -20,10 +20,10 @@ execute:
   echo: true
 editor_options: 
   chunk_output_type: console
-image: "proxy_project_vt.jpg"
+image: "image.jpeg"
 ---
 
-<center>![](proxy_project_vt.jpeg)([Image source: Virginia Tech Publishing](https://twitter.com/VirginiaTechPub?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1286360278993637376%7Ctwgr%5Efc9afc3148e3ac140d50294d58f2ab0d0e5d5221%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fpublishing.vt.edu%2Fsite%2Fbooks%2Fm%2F10.21061%2Fproxy-wars-maguire%2F))</center>
+<center>[](image.jpeg)([Image source: Virginia Tech Publishing](https://twitter.com/VirginiaTechPub?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1286360278993637376%7Ctwgr%5Efc9afc3148e3ac140d50294d58f2ab0d0e5d5221%7Ctwcon%5Es1_&ref_url=https%3A%2F%2Fpublishing.vt.edu%2Fsite%2Fbooks%2Fm%2F10.21061%2Fproxy-wars-maguire%2F))</center>
 
 ```{r}
 #| label: img
