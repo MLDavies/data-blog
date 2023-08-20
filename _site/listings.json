@@ -2,11 +2,12 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/new/new_post.html",
+      "/posts/pairwise_network/network_pairwise.html",
       "/posts/proxy-wiki-scrape/index.html",
       "/posts/post-with-code/index.html",
       "/posts/welcome/index.html",
-      "/posts/series1/new_post/post.html",
-      "/posts/new/new_post.html"
+      "/posts/series1/new_post/post.html"
     ]
   }
 ]

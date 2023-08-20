@@ -1,0 +1,248 @@
+---
+title: "Insurgent (Pairwise) Networks"
+author: "Michael L. Davies"
+date: "`r Sys.Date()`"
+format:
+  html:
+    # embed-resources: true
+    code-fold: true
+    code-tools:
+      source: false
+      toggle: true
+      caption: "Show the code"
+    code-summary: "Show the code"
+    # theme: flatly
+    # theme: slate
+    # keep-md: true
+editor: visual
+toc: true
+number-sections: false
+execute: 
+  warning: false
+  message: false
+  error: false
+  echo: true
+---
+
+
+```{r}
+#| label: libraries
+
+library(tidyverse)
+library(ggraph)
+library(tidygraph)
+library(rsvg)
+library(cowplot)
+library(ggtext)
+library(igraph)
+library(devtools)
+```
+
+```{r}
+
+df_acled_syr <- 
+  read_csv("df_acled_syr_2017_2021.csv") |> 
+  filter(!year %in% c("2021", "2020"),
+         !event_type %in% c("Protests", "Riots", "Violence against civilians")) |> 
+  select(actor1, assoc_actor_1) |> 
+  mutate(actor1 = str_squish(actor1),
+         assoc_actor_1 = str_squish(assoc_actor_1)) 
+```
+
+```{r}
+
+# Separate assoc actors to get all pairwise partnerships'
+df_separate_cross_product <- 
+  df_acled_syr |> 
+  # use only actors with multiple associated actors
+  filter(str_detect(assoc_actor_1, ";")) |>
+  separate_rows(assoc_actor_1, sep = ";") |>
+  mutate(assoc_actor_1 = str_squish(assoc_actor_1)) |> 
+  pivot_longer(actor1:assoc_actor_1) |> 
+  select(value) |> 
+  distinct(value) |> 
+  mutate(value2 = value) |> 
+  expand(value, value2) |> 
+  filter(value !=value2) |> 
+  mutate(helper = str_c(value,value2)) |> 
+  rowwise() |> 
+  mutate(helper = str_c(str_sort(unlist(str_split(helper, ""))),collapse = "")) |> 
+  distinct(helper,.keep_all = T) |> 
+  select(-helper) |> 
+  rename(actor1 = value, assoc_actor_1 = value2)
+
+# bind back with actors that don't have multiple assoc actors
+reshaped_df <- df_acled_syr |> 
+  filter(!str_detect(assoc_actor_1, ";")) |>
+  bind_rows(df_separate_cross_product)
+```
+
+
+```{r}
+
+# create a lookup table for groups to remove
+remove_groups <-
+  c("Military Forces", "Police Forces", 
+    "Operations Room", "Opposition Rebels", 
+    "Alliance/Named Operation", "Tribal", 
+    "Military Council", "Communal Militias", 
+    "Civilians", "SDF", "Islamic State")
+
+df_acled_actors <- 
+  reshaped_df |>
+  mutate(
+    across(
+      actor1:assoc_actor_1,
+      ~ case_when(
+        str_detect(.x, "Military Forces|Government|Allied Syrian") ~ "Military Forces",
+        str_detect(.x, "Unidentified Armed|Opposition Rebels|Islamist|Sunni Muslim|JSH") ~ "Opposition Rebels",
+        str_detect(.x, "Police Forces") ~ "Police Forces",
+        str_detect(.x, "HXP|QSD|YPG|YPJ|Liberation Army of Afrin|Menbij Internal|Asayish|Syriac") ~ "SDF",
+        str_detect(.x, "HTS|JFS|Jabhat Fateh al Sham") ~ "Hayat Tahrir al Sham",
+        str_detect(.x, "Hamza Division|Hamza Brigade") ~ "Hamza Division", 
+        str_detect(.x, "AAS:") ~ "Ahrar al Sham", 
+        str_detect(.x, "Al Sham Corps|Al Sham Division") ~ "Faylaq al Sham",
+        str_detect(.x, "HNDZ") ~ "Nour al Din al Zinki",
+        str_detect(.x, "Sharqiya Army") ~ "Jaysh Sharqiya",
+        str_detect(.x, "Liwa al Aqsa") ~ "Jund al Aqsa",
+        str_detect(.x, "FaR:") ~ "Faylaq al Rahman",
+        str_detect(.x, "JaS:") ~ "Levant Front",
+        str_detect(.x, "Sultan Suleiman Shah") ~ "Sultan Suleiman Shah",
+        str_detect(.x, "Operations Room") ~ "Operations Room",
+        str_detect(.x, "Operation Room") ~ "Operations Room",
+        str_detect(.x, "Wa Harredh al Moa'mineen") ~ "Operations Room",
+        str_detect(.x, "JWS:|JTW:|JTS:|Euphrates Shield|Peace Spring") ~ "Alliance/Named Operation",
+        str_detect(.x, "Islamic State") ~ "Islamic State",
+        str_detect(.x, "Tribal") ~ "Tribal",
+        str_detect(.x, "Military Council") ~ "Military Council",
+        str_detect(.x, "TIP:") ~ "Turkistan Islamic Party",
+        str_detect(.x, "Communal") ~ "Communal Militias",
+        str_detect(.x, "Kurdish Ethnic") ~ "Kurdish Ethnic Militia",
+        str_detect(.x, "JaT:") ~ "Army of the Revolutionaries",
+        str_detect(.x, "Sultan Murad") ~ "Sultan Murad",
+        str_detect(.x, "Ansar al Din") ~ "Ansar al Din",
+        str_detect(.x, "JOS:") ~ "Lions of the East",
+        str_detect(.x, "LAS") ~ "Northern Storm Brigade",
+        str_detect(.x, "Civilians|Protesters|Rioters|Aid Workers|Women|Farmers|Refugees|Prisoners|Journalists|") ~ "Civilians",
+        TRUE ~ .x
+      ))) |>
+  
+  # remove civilans, state forces or unidentified groups
+  filter(!actor1 %in% remove_groups,
+         !assoc_actor_1 %in% remove_groups,
+         actor1 != assoc_actor_1) |> 
+  
+  # Get the top/most groups by number of operations
+  mutate(actor1 = fct_lump(actor1, 10),
+         assoc_actor_1 = fct_lump(assoc_actor_1, 15)) |> 
+  filter(actor1 != "Other",
+         assoc_actor_1 != "Other")
+```
+
+
+```{r}
+
+# create nodes with count of times each actor appears in dataset
+df_nodes <- 
+  df_acled_actors |> 
+  pivot_longer(cols = actor1:assoc_actor_1,
+               names_to = "cols",
+               values_to = "Name") |> 
+  group_by(Name) |> 
+  summarize(count = n()) |> 
+  ungroup() |> 
+  #mutate(countG = cut(count, breaks = c(-Inf, 21, 24, 43, Inf))) |> 
+  mutate(countG = case_when(
+    count < 21 ~ "Least",
+    count < 25 ~ "Less",
+    count < 44 ~ "More",
+    TRUE ~ "Most"
+  ))
+
+# from original df, weight is the count of how often the two actors work together
+# igraph looks for "from", "to", and "weight"
+df_edges <- 
+  df_acled_actors |>
+  count(actor1,assoc_actor_1) |> 
+  rename(weight = n,
+         from = actor1,
+         to = assoc_actor_1)
+
+graph <- 
+  graph_from_data_frame(
+  df_edges, 
+  vertices = df_nodes)
+
+```
+
+```{r}
+#| fig-height: 6
+#| fig-width: 8
+
+graphed <-
+  graph |> 
+  ggraph(layout = 'linear', 
+         circular = TRUE) +
+  ggraph::geom_edge_arc(
+    aes(alpha = weight),
+    width = 1,
+    show.legend = FALSE,
+    color = "grey20"
+  ) +
+  ggraph::geom_node_point(aes(color = countG)) +
+  ggraph::geom_node_label(
+    aes(label = name, 
+        color = countG),
+    alpha = .75,
+    label.size = NA,
+    fill = "#F3F3F3", 
+    size = 3,
+    repel = F,
+    fontface = "bold"
+  ) +
+  labs(
+    title = "Syrian Opposition: Never go it alone!",
+    subtitle = "<b>Bolder lines</b> indicate more <i>joint</i> combat operations with that partner.
+           <br>Colors indicate frequency of <i>total</i> combat operations:
+           <br><b style='color:black'> Most Frequent</b>,
+           <b style='color:#450D54'> More Frequent</b>,
+           <b style='color:#557C9B'> Less Frequent</b>, and 
+           <b style='color:#94B147'>Least Frequent</b>",
+    caption = "Data:  <b>'ACLED Event Data 2017-2020'</b> (acleddata.com)<br> Visualisation by <b>Michael Davies</b>"
+  ) +
+  theme_void() +
+  theme(
+    # margins: top, right, bottom, and left
+    plot.margin = margin(0.7, 0.7, 0.7, 0.7, "cm"),
+    plot.title = element_text(size = 20, color = "grey30", face = "bold"),
+    plot.title.position = 'plot',
+    plot.subtitle = element_markdown(lineheight = 1.2),
+    plot.caption = element_markdown(size = 8),
+    plot.caption.position = 'plot',
+    plot.background = element_rect(color = NA, fill = NA),
+    legend.position = "none",
+  ) +
+  scale_color_manual(values = c("#94B147", "#557C9B", "#450D54", "black")) +
+  coord_fixed(ratio = 0.6, clip = "off")
+
+
+library(magick)
+img <- 
+  image_read("jihadi.PNG") |>
+  image_resize("570x380") |>
+  image_transparent("grey", fuzz = 35)
+
+ggdraw() + 
+  draw_plot(
+    ggplot() + 
+      theme_void() + 
+      theme(
+        plot.background = element_rect(color = NA, fill = "#F3F3F3") 
+      )) +
+  draw_image(interpolate = F, 
+             img, 
+             scale = .35, 
+             x = 0, 
+             y = 0) +
+  draw_plot(graphed) 
+```

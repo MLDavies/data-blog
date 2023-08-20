@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Michael L. Davies">
+<meta name="author" content="Michael Davies">
 <meta name="dcterms.date" content="2023-08-08">
 <meta name="description" content="Scrape Wikipedia for proxy war data">
 
@@ -167,10 +167,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Proxy Wars - Wiki Scrape</h1>
+<div class="quarto-title-block"><div><h1 class="title">Proxy Wars - Wiki Scrape</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Show the code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">scraping</div>
     <div class="quarto-category">R</div>
+    <div class="quarto-category">combat</div>
   </div>
   </div>
 
@@ -186,7 +187,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Michael L. Davies </p>
+             <p>Michael Davies </p>
           </div>
   </div>
     
@@ -203,21 +204,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<center>
-<img src="proxy_project_vt.jpeg" class="img-fluid">(<a href="https://twitter.com/VirginiaTechPub?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1286360278993637376%7Ctwgr%5Efc9afc3148e3ac140d50294d58f2ab0d0e5d5221%7Ctwcon%5Es1_&amp;ref_url=https%3A%2F%2Fpublishing.vt.edu%2Fsite%2Fbooks%2Fm%2F10.21061%2Fproxy-wars-maguire%2F">Image source: Virginia Tech Publishing</a>)
-</center>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image.jpeg" class="img-fluid figure-img" width="1700"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="https://twitter.com/VirginiaTechPub?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1286360278993637376%7Ctwgr%5Efc9afc3148e3ac140d50294d58f2ab0d0e5d5221%7Ctwcon%5Es1_&amp;ref_url=https%3A%2F%2Fpublishing.vt.edu%2Fsite%2Fbooks%2Fm%2F10.21061%2Fproxy-wars-maguire%2F">Image source: Virginia Tech Publishing</a></p>
 <section id="proxy-wars" class="level2">
 <h2 class="anchored" data-anchor-id="proxy-wars">Proxy wars</h2>
 <p>Violence, conflict, and proxy warfare – all on a blissful, dreamy Sunday afternoon. Actually, I was listening to an NPR discussion on an afternoon drive that referenced the work of the <a href="https://publishing.vt.edu/site/books/series/pwp-conflict-studies/">Proxy War Project out of Virginia Tech</a>. As a data geek, the next obvious question is: Gee, where can I find data on that?</p>
-<p>I’m not sure how much the general public thinks about the threat of proxy warfare. Is it a rag tag group of thugs funded by a dark agency and left to run around the forest? Or maybe proxy wars are a relic of the cold war? Well, <a href="https://warontherocks.com/2021/09/the-return-of-great-power-proxy-wars/">according to War on the Rocks</a> (a super cool site on all things war and conflict), “[e]vents of the last decade suggest the increasing salience of such conflicts.” The blog goes on to say that “[p]roxy wars are poised to be a…significant factor in the evolving strategic environment.”</p>
+<p>What does the general public think of regarding proxy warfare? Is it a rag tag group of thugs funded by a dark agency and left to run around the forest? Or maybe proxy wars are a relic of the cold war? To the contrary, <a href="https://warontherocks.com/2021/09/the-return-of-great-power-proxy-wars/">according to War on the Rocks</a> (a super cool site on all things war and conflict), “[e]vents of the last decade suggest the increasing salience of such conflicts.” The blog goes on to say that “[p]roxy wars are poised to be a…significant factor in the evolving strategic environment.”</p>
 <p>So, as soon as I got home, I jumped online for a quick search for some data. The first thing I found <a href="https://en.wikipedia.org/wiki/List_of_proxy_wars">was the Wikipedia page</a>. It most certainly is not the most comprehensive data, but it has a nice feature: A helpful Wiki contributor created a typology of proxy wars. I decided to scrape it to started some initial exploration.</p>
-<p>I’m not intending for this to be a deep dive into coding or proxy war dynamics. This is just a quick and dirty scrape of Wikipedia data to get a sense of what’s going.</p>
+<p>I’m not intending for this to be a deep dive into coding nor proxy war dynamics. This is just a quick and dirty scrape of Wikipedia data to get a sense of what’s going.</p>
 </section>
 <section id="scraping-and-cleaning-wikipedia-data" class="level2">
 <h2 class="anchored" data-anchor-id="scraping-and-cleaning-wikipedia-data">Scraping and Cleaning Wikipedia Data</h2>
 <div class="cell">
 <details>
-<summary>Code</summary>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># libraries</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -248,7 +256,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Wikipedia spread the data across a number of tables. To prep the data for plotting, I put them into one big data frame and did some minor cleaning. In particular, the dates were a little jenky. The resulting data looks like:</p>
 <div class="cell">
 <details>
-<summary>Code</summary>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data cleaning</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>proxy_data_df <span class="ot">&lt;-</span> </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># drop unneeded data</span></span>
@@ -345,7 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>To avoid rewriting a bunch of code, let’s create a little function to select the war-type of choice and plot the data. (Note, the plotting code was a little long and distracting, so I pushed some of it to a source script.)</p>
 <div class="cell">
 <details>
-<summary>Code</summary>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a function to select war type and plot</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>war_plot <span class="ot">&lt;-</span> <span class="cf">function</span>(df, type) {</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  </span>
@@ -385,7 +393,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div>
 <details>
-<summary>Code</summary>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">war_plot</span>(proxy_data_df, <span class="st">"Pre-World War I proxy wars"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">war_plot</span>(proxy_data_df, <span class="st">'Inter-war period proxy wars'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -402,7 +410,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div>
 <details>
-<summary>Code</summary>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">war_plot</span>(proxy_data_df, <span class="st">'Modern proxy wars'</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">war_plot</span>(proxy_data_df, <span class="st">'Ongoing proxy wars'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -419,7 +427,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="cell">
 <details>
-<summary>Code</summary>
+<summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">war_plot</span>(proxy_data_df, <span class="st">'Cold War proxy wars'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
@@ -517,6 +525,57 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
   function tippyHover(el, contentFn) {
     const config = {
       allowHTML: true,
