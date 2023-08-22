@@ -1,5 +1,6 @@
 ---
 title: "Insurgent (Pairwise) Networks"
+subtitle: "Conflict makes for strange bedfellows"
 author: "Michael L. Davies"
 date: "`r Sys.Date()`"
 format:
@@ -24,6 +25,15 @@ execute:
   echo: true
 ---
 
+During the height of the Syrian civil war, many of us watching from afar were puzzled when "moderate" insurgent groups would jump into bed (or alliances) with hardliners or jihadists. The Syrian conflict had hundreds, maybe thousands, of armed groups forming various kinds of alliances, then divorcing only to reconcile again.
+
+A lot is made of the role of ideology when armchair commanders (like myself) comment as these disasters play out. On the other hand, alliances could be a pragmatic choice. By aggregating combat power, armed groups might increase their chances of survival—even if only to turn on each other at a later stage.
+
+In fact, I recently read a compelling argument on this topic: "[Alliance Formation in Civil Wars](https://www.amazon.com/Alliance-Formation-Professor-Fotini-Christia/dp/1107683483/ref=sr_1_1?keywords=alliance+formation+in+civil+wars&qid=1692661337&s=books&sprefix=alliance+formation%2Cstripbooks%2C100&sr=1-1)" by Fotini Christia. In this book, Christia states: "It would be natural to suppose that warring groups form alliances based on shared identity considerations—such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists—but this is not what we see."
+
+So, with that motivation, I decided to explore what we could find among Syrian armed groups. When coalitions of Syrian armed groups engaged in battles, they frequently partnered with several groups. So, my question was: would groups tolerate fighting alongside other groups that are ideological enemies? So, I'm focusing on pairwise relationships, even when there are many groups in the alliance.
+
+
 
 ```{r}
 #| label: libraries
@@ -38,21 +48,89 @@ library(igraph)
 library(devtools)
 ```
 
+## Data
+
+::: callout-important
+## A love affair with ACLED data! 
+
+I came across the [Armed Conflict Location & Event Data Project(ACLED)](www.acleddata.com) a few years ago. What an amazing resource. ACLED collects real time and historical data on political violence and protest events in nearly 100 countries. 
+:::
+
+ACLED data is robust, with many columns and over many years. I'm only concerned with the `actor1` and `assoc_actor_1` columns.  Let's just take a quick peak:
+
+```{r}
+
+read_csv("df_acled_syr_2017_2021.csv") |> 
+  select(year, event_date, event_type, actor1, assoc_actor_1) |> 
+  filter(!is.na(assoc_actor_1)) |>
+  slice_head(n = 5) |> 
+  knitr::kable()
+```
+
+And I need select the columns of interest and then filter down to battle related events (filtering out `Protests`, `Riots`, and `Violence against civilians`)
+
 ```{r}
 
 df_acled_syr <- 
   read_csv("df_acled_syr_2017_2021.csv") |> 
-  filter(!year %in% c("2021", "2020"),
-         !event_type %in% c("Protests", "Riots", "Violence against civilians")) |> 
+  filter(year %in% 2017:2019,
+         event_type %in% c("Explosions/Remote violence",
+                           "Battles",
+                           "Strategic developments")) |> 
   select(actor1, assoc_actor_1) |> 
   mutate(actor1 = str_squish(actor1),
          assoc_actor_1 = str_squish(assoc_actor_1)) 
 ```
 
+Here's the difficult part. The reduced ACLED data looks akin to this:
+
+```{r}
+
+(test <- tibble::tibble(
+  actor1 = c("A", "A", "B"),
+  assoc_actor_1 = c("B", "B; C", "C; D; E"))) |> 
+  knitr::kable()
+```
+
+
+And I want to get all combinations of pairwise relationships. So, I need to work out and test the code to accomplish this.
+
+```{r}
+
+#| # Separate assoc actors to get all pairwise partnerships'
+df <- 
+  test |> 
+  # use only actors with multiple associated actors
+  filter(str_detect(assoc_actor_1, ";")) |>
+  separate_rows(assoc_actor_1, sep = ";") |>
+  mutate(assoc_actor_1 = str_squish(assoc_actor_1)) |> 
+  pivot_longer(actor1:assoc_actor_1) |> 
+  select(value) |> 
+  distinct(value) |> 
+  mutate(value2 = value) |> 
+  expand(value, value2) |> 
+  filter(value !=value2) |> 
+  mutate(helper = str_c(value,value2)) |> 
+  rowwise() |> 
+  mutate(helper = str_c(str_sort(unlist(str_split(helper, ""))),collapse = "")) |> 
+  distinct(helper,.keep_all = T) |> 
+  select(-helper) |> 
+  rename(actor1 = value, assoc_actor_1 = value2)
+
+# bind back with actors that don't have multiple assoc actors
+test |> 
+  filter(!str_detect(assoc_actor_1, ";")) |>
+  bind_rows(df) |> 
+  knitr::kable()
+
+```
+
+That looks good! Let's apply it to the acled data.
+
 ```{r}
 
 # Separate assoc actors to get all pairwise partnerships'
-df_separate_cross_product <- 
+df_separate <- 
   df_acled_syr |> 
   # use only actors with multiple associated actors
   filter(str_detect(assoc_actor_1, ";")) |>
@@ -74,8 +152,12 @@ df_separate_cross_product <-
 # bind back with actors that don't have multiple assoc actors
 reshaped_df <- df_acled_syr |> 
   filter(!str_detect(assoc_actor_1, ";")) |>
-  bind_rows(df_separate_cross_product)
+  bind_rows(df_separate)
 ```
+
+Ok, I have to confess. This next part stumped me and took forever. First, a huge shout out to Wikipedia contributors. There are soooo many actors in the dataset. I spend much more time than intended trying to consolidate them. 
+
+Second, I needed to clean and consolidate the actors, and then remove the non-armed-opposition groups. I tried several ways to make happen much more parsimoniously with `sapply` and `purrr::map` and a two-column lookup table, but it beat me. If you have suggestions, I'm eager to hear them.
 
 
 ```{r}
@@ -139,6 +221,7 @@ df_acled_actors <-
          assoc_actor_1 != "Other")
 ```
 
+Now to prep the data for graphing.
 
 ```{r}
 
@@ -174,6 +257,8 @@ graph <-
   vertices = df_nodes)
 
 ```
+
+And at last, let's generate a pairwise network plot. 
 
 ```{r}
 #| fig-height: 6
@@ -246,3 +331,8 @@ ggdraw() +
              y = 0) +
   draw_plot(graphed) 
 ```
+
+
+Ahhh the tangled web they weave. I have been mixing a few metaphors.
+
+I supposed I should have used the colors to signify ideology. However, I became interested in how the frequency of operations and partnership might reflect battlefield success.
