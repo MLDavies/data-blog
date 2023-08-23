@@ -15,8 +15,6 @@ page-layout: full
 title-block-banner: false
 ---
 
-
 <!-- https://beamilz.com/posts/2022-06-05-creating-a-blog-with-quarto/en/ -->
-
 
 <!-- https://albert-rapp.de/posts/13_quarto_blog_writing_guide/13_quarto_blog_writing_guide.html -->
