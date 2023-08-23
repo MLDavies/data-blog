@@ -2,7 +2,8 @@
 title: "Insurgent (Pairwise) Networks"
 subtitle: "Conflict makes for strange bedfellows"
 author: "Michael L. Davies"
-date: "`r Sys.Date()`"
+date: "Aug 08, 2022"
+categories: [network analysis, R, combat]
 format:
   html:
     # embed-resources: true
@@ -29,7 +30,9 @@ During the height of the Syrian civil war, many of us watching from afar were pu
 
 A lot is made of the role of ideology when armchair commanders (like myself) comment as these disasters play out. On the other hand, alliances could be a pragmatic choice. By aggregating combat power, armed groups might increase their chances of survival---even if only to turn on each other at a later stage.
 
-In fact, I recently read a compelling argument on this topic: "Alliance Formation in Civil Wars" by Fotini Christia.[^christia] In this book, Christia states: "It would be natural to suppose that warring groups form alliances based on shared identity considerations---such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists---but this is not what we see."
+In fact, I recently read a compelling argument on this topic: "Alliance Formation in Civil Wars" by Fotini Christia.[^1] In this book, Christia states: "It would be natural to suppose that warring groups form alliances based on shared identity considerations---such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists---but this is not what we see."
+
+[^1]: Fotini Christia, "[Alliance Formation in Civil Wars](https://www.amazon.com/Alliance-Formation-Professor-Fotini-Christia/dp/1107683483/ref=sr_1_1?keywords=alliance+formation+in+civil+wars&qid=1692661337&s=books&sprefix=alliance+formation%2Cstripbooks%2C100&sr=1-1)".
 
 So, with that motivation, I decided to explore what we could find among Syrian armed groups. When coalitions of Syrian armed groups engaged in battles, they frequently partnered with several groups. So, my question was: would groups tolerate fighting alongside other groups that are ideological enemies? So, I'm focusing on pairwise relationships, even when there are many groups in the alliance.
 
@@ -51,8 +54,10 @@ library(devtools)
 ::: callout-important
 ## A love affair with ACLED data!
 
-I came across the [Armed Conflict Location & Event Data Project(ACLED)](www.acleddata.com) a few years ago. What an amazing resource. ACLED is a disaggregated data collection, analysis, and crisis mapping project. The ACLED team collects real time and historical data on political violence and protest events in nearly 100 countries. In short, it's awesome.[^data]
+I came across the [Armed Conflict Location & Event Data Project(ACLED)](www.acleddata.com) a few years ago. What an amazing resource. ACLED is a disaggregated data collection, analysis, and crisis mapping project. The ACLED team collects real time and historical data on political violence and protest events in nearly 100 countries. In short, it's awesome.[^2]
 :::
+
+[^2]: [Data from The Armed Conflict Location & Event Data Project (ACLED)](acleddata.com/) was accessed spring of 2021. Given the hieght of the Syrian conflict occured before this time, I chose to re-use this data for this project.
 
 ACLED data is robust, with many columns and over many years. In this dataset, `actor` (along with `assoc_actor_1` acts in some (usually bad) way on `actor2`. So, I'm only concerned with the `actor1` and `assoc_actor_1` columns. Let's just take a quick peak:
 
@@ -65,7 +70,7 @@ read_csv("df_acled_syr_2017_2021.csv") |>
   knitr::kable()
 ```
 
-&nbsp;
+ 
 
 I need select the columns of interest and then filter down to battle related events (filtering out `Protests`, `Riots`, and `Violence against civilians`)
 
@@ -82,7 +87,7 @@ df_acled_syr <-
          assoc_actor_1 = str_squish(assoc_actor_1)) 
 ```
 
-&nbsp;
+ 
 
 Here's the difficult part. The reduced ACLED data looks akin to this:
 
@@ -94,9 +99,11 @@ Here's the difficult part. The reduced ACLED data looks akin to this:
   knitr::kable()
 ```
 
-&nbsp;
+ 
 
-For what I'm interested in, I need to get the pairwise combinations. So, I need to work out and test the code to accomplish this. A huge thanks to [Dusty Turner](https://dustysturner.com/).[^turner] In fact, this chunk is largely thanks to his generosity.
+For what I'm interested in, I need to get the pairwise combinations. So, I need to work out and test the code to accomplish this. A huge thanks to [Dusty Turner](https://dustysturner.com/).[^3] In fact, this chunk is largely thanks to his generosity.
+
+[^3]: Major [Dusty Turner](https://dustysturner.com/), U.S. Army is a monster coder and overall big brain. I've leaned on him for a number of problems. He consistently digs me out of a hole -- all while cracking a joke.
 
 ```{r}
 
@@ -128,7 +135,7 @@ test |>
 
 ```
 
-&nbsp;
+ 
 
 That looks good! Let's apply it to the ACLED data.
 
@@ -160,7 +167,7 @@ reshaped_df <- df_acled_syr |>
   bind_rows(df_separate)
 ```
 
-&nbsp;
+ 
 
 Ok, I have to confess. This next part stumped me and took forever. First, a huge shout out to Wikipedia contributors. There are soooo many actors in the dataset. I spend much more time than intended trying to consolidate them, constantly referencing Wikipedia to figure out what's going on.
 
@@ -227,7 +234,7 @@ df_acled_actors <-
          assoc_actor_1 != "Other")
 ```
 
-&nbsp;
+ 
 
 Let's check out what the numbers look like for the top 10 most operationally-active groups. How many joint (aka partnered) operations does each group conduct - measured as a percentage of overall joint operations?
 
@@ -246,7 +253,7 @@ datatable(df_acled_actors %>%
 
 ```
 
-&nbsp;
+ 
 
 Clearly, we expect Hayat Tahrir al-Sham to be a prominent player.
 
@@ -363,17 +370,8 @@ ggdraw() +
 
 Ahhh the tangled web they weave. I know I've been mixing metaphors.
 
-I supposed I should have used the colors to signify ideology so that we can see if ideology and parnterships "travel well together." However, I became interested in how the frequency of operations and partnership might reflect battlefield success. For instance, Hayat Tahrir al-Sham, by all accounts, rose to be the most dominant opposition group. This is reflected in the fact that they conducted the most operations overall. Notably, however, they seldom engaged in an operation on their own. They engaged in the most frequent "joint operations" - despite being consider hardliners, jihadists, and ISIS offshoots.[^hts]
+I supposed I should have used the colors to signify ideology so that we can see if ideology and parnterships "travel well together." However, I became interested in how the frequency of operations and partnership might reflect battlefield success. For instance, Hayat Tahrir al-Sham, by all accounts, rose to be the most dominant opposition group. This is reflected in the fact that they conducted the most operations overall. Notably, however, they seldom engaged in an operation on their own. They engaged in the most frequent "joint operations" - despite being consider hardliners, jihadists, and ISIS offshoots.[^4]
+
+[^4]: The Armed Conflict Location & Event Data Project (ACLED), [Actor Profile: Hayat Tahrir al-Sham (HTS) 26 July 2023](https://acleddata.com/2023/07/26/actor-profile-hayat-tahrir-al-sham-hts).
 
 Maybe the key to insurgent survival is - never go it alone.
-
-
-[^christia]: Fotini Christia, "[Alliance Formation in Civil Wars](https://www.amazon.com/Alliance-Formation-Professor-Fotini-Christia/dp/1107683483/ref=sr_1_1?keywords=alliance+formation+in+civil+wars&qid=1692661337&s=books&sprefix=alliance+formation%2Cstripbooks%2C100&sr=1-1)".
-
-[^turner]: Major [Dusty Turner](https://dustysturner.com/), U.S. Army is a monster coder and overall big brain. I've leaned on him for a number of problems. He consistently digs me out of a hole -- all while cracking a joke.
-
-[^hts]: The Armed Conflict Location & Event Data Project (ACLED), [Actor Profile: Hayat Tahrir al-Sham (HTS) 26 July 2023](https://acleddata.com/2023/07/26/actor-profile-hayat-tahrir-al-sham-hts).
-
-[^data]: [Data from The Armed Conflict Location & Event Data Project (ACLED)](acleddata.com/) was accessed spring of 2021. Given the hieght of the Syrian conflict occured before this time, I chose to re-use this data for this project.
-
-
