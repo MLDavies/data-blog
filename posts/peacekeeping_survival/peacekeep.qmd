@@ -28,7 +28,13 @@ execute:
 
 ## War-type and peacekeeping mission duration
 
-This topic has been on my mind for a while. The relationship between war type and the duration of subsequent peacekeeping missions almost certainly varies widely. Specifically, I theorize (based on nothing but my gut) that civil wars have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking—all of which represent challenges to peacekeeping. On the other hand, generally speaking, interstate wars might have more clearly defined objectives and could be resolved more swiftly through diplomatic means or clearly defined peace agreements, leading to comparatively shorter peacekeeping mission durations.
+![Image Source: https://peacekeeping.un.org/en/department-of-peace-operations](peacekeep_img.jpg)
+
+This topic has been on my mind for a while. The relationship between war type and the duration of subsequent peacekeeping missions almost certainly varies widely. 
+
+Specifically, I theorize (based on nothing but my gut) that *civil wars* have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking—all of which represent challenges to peacekeeping. 
+
+On the other hand, generally speaking, *interstate wars* might have more clearly defined objectives and could be resolved more swiftly through diplomatic means or clearly defined peace agreements, leading to comparatively shorter peacekeeping mission durations.
 
 ::: callout-tip
 ## In short:
