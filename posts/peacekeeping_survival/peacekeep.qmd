@@ -1,0 +1,613 @@
+---
+title: "Peacekeeping Missions and Event History (AKA Survival) Analysis"
+# subtitle: "Maximum Likelihood Estimation"
+author: "Michael L. Davies"
+date: "Aug 08, 2023"
+#format: docx
+format:
+  html:
+    # embed-resources: true
+    code-fold: true
+    code-tools:
+      source: false
+      toggle: true
+      caption: "Show the code"
+    code-summary: "Show the code"
+    # theme: flatly
+    # theme: slate
+    # keep-md: true
+editor: visual
+toc: true
+number-sections: false
+execute: 
+  warning: false
+  message: false
+  error: false
+  echo: true
+---
+
+## War-type and peacekeeping mission duration
+
+This topic has been on my mind for a while. The relationship between war type and the duration of subsequent peacekeeping missions almost certainly varies widely. Specifically, I theorize (based on nothing but my gut) that civil wars have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking—all of which represent challenges to peacekeeping. On the other hand, generally speaking, interstate wars might have more clearly defined objectives and could be resolved more swiftly through diplomatic means or clearly defined peace agreements, leading to comparatively shorter peacekeeping mission durations.
+
+::: callout-tip
+## In short:
+
+Wars vary widely in terms of internal and external dynamics—most of which linger as peacekeeping missions try to stabilize the situation. Is there a relationship between war type and peacekeeping mission duration?
+:::
+
+So, here I will conduct a *parametric event history* (AKA survival) analysis utilizing UN peacekeeping data. I will two of the three conflict types: civil, interst, and icw.
+
+```{r}
+#| eval: false
+#| echo: false
+# Install
+if(!require(devtools)) install.packages("devtools")
+devtools::install_github("kassambara/survminer")
+```
+
+
+
+```{r}
+#| label: r-libraries
+library(haven)
+library(tidyverse)
+library(flexsurv)
+library(survival)
+library(survminer)
+library(ggsurvfit)
+library(coxed)
+#library(texreg)
+source('my_gg_theme.R')
+```
+
+
+
+::: callout-important
+I implemented all models in both R and Python (See respective tabs). The results, of course, are marginally different likely a result of rounding error. Therefore, I base all interpretations on the results from R for no good reason.
+:::
+
+------------------------------------------------------------------------
+
+## Load, Clean and Look at the Data
+
+In the context of implementing a survival model using flexsurvreg() in R, the appropriate shape of the dataframe depends on how you want to model the relationship between the covariates and the survival outcome. Both dataframe structures you provided are valid, but they represent different ways of specifying the covariates in the model.
+
+```{r}
+un_df <- 
+  read_dta('UNdata.dta') %>% 
+  select(failed, duration, civil, interst, icw) %>%  
+  drop_na()
+
+# references
+# https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5868723/
+# https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html#Kaplan-Meier_plots
+# https://lifelines.readthedocs.io/en/latest/lifelines.plotting.html
+
+# reshaping to experiment
+un_df_cat <- 
+  un_df %>% 
+  mutate(
+    wartype = factor(
+      if_else(civil == 1,
+              'civil',
+              if_else(interst == 1,
+                      'interst',
+                      'icw')))) %>%
+  mutate(wartype = 
+           fct_relevel(wartype,
+                       "icw",
+                       "civil",
+                       "interst")) %>% 
+  select(-c(civil, interst, icw))
+
+# Python requrres numeric
+un_df_num <- 
+  un_df %>% 
+  mutate(
+    wartype = 
+      if_else(civil == 1,
+              1,
+              if_else(interst == 1,
+                      2,
+                      3))) %>% 
+  select(-c(civil, interst, icw))
+
+un_df %>% 
+  head() %>% 
+  knitr::kable()
+```
+
+## Kaplan-Meier Plot
+
+**Initial (descriptive) look at the data:** The survival probability reflects the likelihood of an individual surviving or not experiencing the event up to that time point. It ranges from 0 to 1, with 0 indicating no survival (event occurred) and 1 indicating complete survival (no event occurred). Each curve below represents a different group within the study, and we see distinct differences in survival probabilities between the groups.
+
+::: panel-tabset
+# R solution
+
+```{r}
+
+survfit2(Surv(duration, failed) ~ 1, data = un_df) %>% 
+  ggsurvfit() +
+  labs(
+    x = "Days",
+    y = "Survival probability",
+    title = "Peacekeeping missions: Overall survival probability"
+  ) + 
+  add_confidence_interval() +
+  add_risktable() +
+  my_gg_theme
+
+```
+
+We can use the `summary()` to find the probability of surviving to 1 year, which is approximately 20%. (Note: the time variable in the data is actually in days, so we need to use times = 365.25)
+
+```{r}
+
+summary(survfit(
+  Surv(duration, failed) ~ 1, 
+  data = un_df), 
+  times = 365.25)
+```
+
+```{r}
+
+survfit2(Surv(duration, failed) ~ 
+           civil + interst + icw, 
+         data = un_df) %>% 
+  ggsurvfit() +
+  labs(
+    x = "Days",
+    y = "Survival probability",
+    title = "Peacekeeping missions: Survival probability by Type"
+  ) + 
+  add_risktable() +
+  my_gg_theme
+```
+
+# Python Solution
+
+[According to the Python documentation](https://lifelines.readthedocs.io/en/latest/lifelines.plotting.html), these plots show the survival function of the model plus it's area-under-the-curve (AUC) up until the point `t`. *The AUC is known as the restricted mean survival time (RMST).*
+
+```{python}
+#| label: python-libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from lifelines import GeneralizedGammaFitter, ExponentialFitter, WeibullFitter, CoxPHFitter, LogNormalFitter
+from lifelines import GeneralizedGammaRegressionFitter
+
+from lifelines.utils import restricted_mean_survival_time
+from lifelines.datasets import load_waltons
+from lifelines.plotting import rmst_plot, plot_lifetimes
+from lifelines import KaplanMeierFitter
+from lifelines.plotting import rmst_plot
+```
+
+```{python}
+# https://lifelines.readthedocs.io/en/latest/lifelines.plotting.html
+ 
+df = r.un_df_cat
+
+time_limit = 10
+
+# Create Kaplan-Meier fitted objects for each group
+kmf_civil = KaplanMeierFitter().\
+    fit(df['duration'], df['failed']) # label='wartype'
+
+rmst_plot(kmf_civil, t=time_limit, show_censors=False)
+
+plt.xlabel('Time')
+plt.ylabel('RMST')
+plt.title('Overall Restricted Mean Survival Time (RMST) Plot - wide df')
+plt.legend()
+plt.show()
+```
+
+```{python}
+#| eval: false
+# https://lifelines.readthedocs.io/en/latest/lifelines.plotting.html
+
+df = r.un_df
+# Separate the data into groups based on 'civil' and 'interst'
+ix_civil = df['civil'] == "1"
+ix_interst = df['interst'] == "1"
+ix_icw = df['icw'] == "1"
+
+# Create Kaplan-Meier fitted objects for each group
+kmf_civil = KaplanMeierFitter().\
+    fit(df['duration'][ix_civil], df['failed'][ix_civil], label='Civil War')
+    
+kmf_interst = KaplanMeierFitter().\
+    fit(df['duration'][ix_interst], df['failed'][ix_interst], label='Interstate War')
+    
+kmf_icw = KaplanMeierFitter().\
+    fit(df['duration'][ix_icw], df['failed'][ix_icw], label='icw')
+
+# Plot RMST for each group
+ax = plt.subplot(111)
+rmst_plot(kmf_civil, t=10, ax=ax, show_censors=False)
+rmst_plot(kmf_interst, t=10, ax=ax, show_censors=False)
+rmst_plot(kmf_icw, t=10, ax=ax, show_censors=False)
+
+plt.xlabel('Time')
+plt.ylabel('RMST')
+plt.title('Restricted Mean Survival Time (RMST) Plot')
+plt.legend()
+plt.show()
+```
+
+```{python}
+df = r.un_df_cat
+# Separate the data into groups based on 'civil' and 'interst'
+ix_civil = df['wartype'] == "civil"
+ix_interst = df['wartype'] == "interst"
+ix_icw = df['wartype'] == "icw"
+time_limit = 10
+
+# Create Kaplan-Meier fitted objects for each group
+kmf_civil = KaplanMeierFitter().\
+    fit(df['duration'][ix_civil], df['failed'][ix_civil], label='Civil War')
+    
+kmf_interst = KaplanMeierFitter().\
+    fit(df['duration'][ix_interst], df['failed'][ix_interst], label='Interstate War')
+    
+kmf_icw = KaplanMeierFitter().\
+    fit(df['duration'][ix_icw], df['failed'][ix_icw], label='icw')
+
+# Plot RMST for each group
+ax = plt.subplot(111)
+rmst_plot(kmf_civil, t=time_limit, ax=ax, show_censors=False)
+rmst_plot(kmf_interst, t=time_limit, ax=ax, show_censors=False)
+rmst_plot(kmf_icw, t=time_limit, ax=ax, show_censors=False)
+
+plt.xlabel('Time')
+plt.ylabel('RMST')
+plt.title('Restricted Mean Survival Time (RMST) Plot')
+plt.legend()
+plt.show()
+```
+:::
+
+
+
+## Fit the model
+
+::: callout-tip
+## Prompt:
+
+Estimate a parametric survival model using the generalized gamma distribution and interpret the coefficient estimates.
+:::
+
+::: panel-tabset
+# R solution
+
+Intercept only (NULL) model:
+
+```{r}
+## Estimate parametric models - Generalized gamma
+
+gamma_fit <- flexsurvreg(
+  formula = 
+    Surv(time = duration,
+         event = failed) ~ 1,
+  data = un_df,
+  dist = "gengamma"
+  )
+
+gamma_fit 
+```
+
+When using a wide dataframe (stratified war type with cols = civil, interst, and icw), R produces:
+
+```{r}
+## Estimate parametric models - Generalized gamma
+
+gamma_fit <- flexsurvreg(
+  formula = 
+    Surv(time = duration,
+         event = failed) ~ civil + interst,
+  data = un_df,
+  dist = "gengamma"
+  )
+
+gamma_fit 
+```
+
+I reshaped to include a `wartype` covariate that collapses the three types of war to war column -- primarily because this is the shape required for Python. Note that R can handle it either way:
+
+```{r}
+un_df_cat %>% 
+  head() %>% 
+  knitr::kable()
+```
+
+```{r}
+## Estimate parametric models - Generalized gamma
+
+gamma_fit <- flexsurvreg(
+  formula = 
+    Surv(time = duration,
+         event = failed) ~ wartype,
+  data = un_df_cat,
+  dist = "gengamma"
+  )
+
+gamma_fit 
+```
+
+**Accelerated Failure Time Models**:
+
+Assumption: The accelerated failure time (AFT) model assumes that the covariates have a multiplicative effect on the survival time or the time-to-event variable. In other words, the model assumes that the covariates accelerate or decelerate the time scale in a linear way.
+
+**Civil War**
+
+For an AFT model, the coefficient (call it $\beta_1$) represents the log of the time ratio associated with the covariate. In this case, the covariate `civil1` is binary, and it compares the effect of being in the group `civil1` (compared to the reference group `civil0`) on the survival time. Since the coefficient is -0.26, we would take the exponential of the coefficient (i.e., exp(-0.26)) to get the time ratio. (Time Ratio: exp(-0.26) ≈ 0.78)
+
+So, wars in the group `civil1` have a survival time that is approximately 0.78 times shorter (or 22% shorter) compared to wars in the reference group `civil0`, all other factors being equal.
+
+Since the coefficient is negative, it suggests that being in the `civil1` group is associated with shorter survival times (an accelerating effect on the event time) compared to the reference group `civil0`.
+
+**Interstate War**
+
+For interstate war, the time Ratio: exp(0.9711) ≈ 2.6408 indicates that wars in the group `interst1` have a survival time that is approximately 2.64 times longer (or 164% longer) compared to wars in the reference group `interst0`, all other factors being equal.
+
+Since the coefficient is positive, it suggests that being in the `interst1` group is associated with longer survival times (a decelerating effect on the event time) compared to the reference group `interst0.`
+
+# Python Solution
+
+## A Null model
+
+```{python}
+# https://lifelines.readthedocs.io/en/latest/Survival%20Regression.htmlAC
+
+df = r.un_df_num
+df['Intercept'] = 1.
+
+# create parameters <-> covariates dict
+# The values in the dict become can be formulas, or column names in lists:
+regressors = {
+    'mu_': df.columns.difference(['failed', 'duration']),
+    'sigma_': ["wartype", "Intercept"],
+    'lambda_': 'wartype + 1',
+}
+
+# this will regress df against all 3 parameters
+# gg_model = GeneralizedGammaRegressionFitter(penalizer=1.).\
+#     fit(df, 'duration', 'failed')
+
+gg_model = GeneralizedGammaRegressionFitter(penalizer=0.0001).\
+    fit(df, 'duration', 'failed', regressors=regressors)
+    
+gg_model.print_summary()
+```
+
+Cumulative Hazard Rates
+
+```{python}
+gg_model.plot()
+plt.show();
+```
+:::
+
+## Monotonic and non-monotonic distributions
+
+::: callout-tip
+## Prompt:
+
+Here I choose one monotonic distribution and one non-monotonic distribution and estimate additional parametric survival models and interpret the results. 
+:::
+
+::: panel-tabset
+# R Solution
+
+**Monotonic Distribution**
+
+```{r}
+## Estimate parametric models - Generalized gamma
+
+monot_fit <- flexsurvreg(
+  formula = 
+    Surv(time = duration,
+         event = failed) ~ wartype,
+  data = un_df_cat,
+  dist = "weibull"
+  )
+
+monot_fit 
+```
+
+**Non-Monotonic Distribution**
+
+```{r}
+## Estimate parametric models - Generalized gamma
+
+non_mono_fit <- flexsurvreg(
+  formula = 
+    Surv(time = duration,
+         event = failed) ~ wartype,
+  data = un_df_cat,
+  dist = "lognormal"
+  )
+
+non_mono_fit 
+```
+
+# Python Solution
+
+Weibull Distribution
+
+```{python}
+weibull_model = WeibullFitter().\
+    fit(r.un_df_num['duration'], event_observed = r.un_df_num['failed'])
+
+print(weibull_model.summary)
+```
+
+```{python}
+# weibull_model.plot()
+weibull_model.plot()
+plt.show();
+```
+
+```{python}
+# create an exponential model
+logn_model = LogNormalFitter().\
+    fit(r.un_df['duration'], event_observed = r.un_df['failed'])
+
+print(logn_model.summary)
+```
+
+```{python}
+logn_model.plot()
+plt.show();
+```
+:::
+
+## Estimate a Cox model
+
+::: callout-tip
+## Estimate a Cox model
+
+Estimate a Cox model and interpret the coefficient estimates.
+:::
+
+::: panel-tabset
+# R Solution
+
+<!-- https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html#The_Cox_regression_model -->
+
+```{r}
+#library(gtsummary)
+summary(cox1 <- 
+          coxph(Surv(time = duration,
+                     event = failed) ~ 
+                  civil + interst, 
+                data = un_df,
+                ties = "efron"))
+
+# cox1 %>% 
+#   tbl_regression(exp = TRUE) 
+
+# summary(cox2 <- 
+#           coxph(Surv(time = duration,
+#                      event = failed) ~ 
+#                   wartype, 
+#                 data = un_df_cat,
+#                 ties = "efron"))
+
+# cox3 %>% 
+#   tbl_regression(exp = TRUE)
+```
+
+**Cox proportional hazards regression** model is used to analyze the association between covariates and the hazard function (the risk of an event occurring at a specific time) in survival data. The Cox proportional hazards model assumes that the hazard for any individual is proportional to the hazard for any other individual at all time points. This means that the hazard ratio between two groups remains constant over time.
+
+Alternatively, we can think of the hazard rates obtained from the Cox proportional hazards model represent the estimated instantaneous risk of an event occurring at a particular time. More specifically, the hazard rate at a specific time represents the conditional probability that an event will occur at that time, given that the individual has survived up to that time and has the specific covariate values.
+
+In the context of categorical covariates, the hazard rates obtained for different levels of the categorical variable indicate how the risk of the event changes over time compared to the reference group. A hazard rate greater than 1 indicates a higher risk (higher probability of an event occurring) relative to the reference group.
+
+`civil1`:
+
+-   Coefficient (beta): 0.76
+-   Hazard Ratio (exp(coef)): 2.13
+
+Interpretation: Individuals in the `civil1` group have a hazard (risk) of experiencing the event (ending of peacekeeping mission) approximately 2.13 times higher than individuals in the reference group `civil0`, all other factors being equal. (The coefficient is statistically significant at the 0.05 level)
+
+`interst1`:
+
+-   Coefficient (beta): -0.87
+-   Hazard Ratio (exp(coef)): 0.42
+
+Interpretation: Individuals in the `interst1` group have a hazard (risk) of experiencing the event approximately 0.42 times lower (or 58.2% lower) than individuals in the reference group `interst0`, all other factors being equal. (The coefficient is statistically significant at the 0.10 level)
+
+```{r}
+#| echo: false
+#| eval: false
+un_df %>%
+  mutate(psurv = predict(cox1,
+                         type = "survival",
+                         newdata = un_df)) %>% 
+  arrange(duration) %>% 
+  ggplot(aes(x = duration,
+           y = psurv)) +
+  geom_path(position = "identity",
+            linewidth = 2,
+            color = 'darkred',
+            alpha = 0.6) +
+  labs(
+    title = "Cox Survival Model Baseline probabilities",
+    subtitle = "I'm not sure this is right...",
+    x = "Duration",
+    y = "Baseline survivor rates",
+    ) +
+  my_gg_theme
+
+```
+
+# Python Solution
+
+```{python}
+cph_model = CoxPHFitter()
+
+cph_model.fit(r.un_df, 
+    duration_col = 'duration', 
+    event_col = 'failed', 
+    formula = 'civil + interst')
+
+print(cph_model.summary)
+```
+
+```{python}
+cph_model.plot()
+plt.show()
+```
+
+## Question 5
+
+::: callout-tip
+## Prompt:
+
+Of the four estimated models, identify the "best"-fitting model and justify your selection. Produce plots of the survival function and hazard rate based on your chosen model.
+:::
+
+Let's pick the model with the lowest AIC:
+
+```{python}
+data = {
+  "log Normal": [round(logn_model.AIC_,2), round(logn_model.BIC_,2)],
+  "Weibull": [round(weibull_model.AIC_,2), round(weibull_model.BIC_,2)],
+  "Gen Gamma": [round(gg_model.AIC_,2), round(gg_model.BIC_,2)]
+}
+
+py_mod_metric = pd.DataFrame(data, index = [['AIC', 'BIC']]).\
+    rename_axis("Metric").\
+    reset_index()
+```
+
+```{r}
+library(reticulate)
+
+py$py_mod_metric %>% 
+  knitr::kable()
+```
+
+
+:::
+
+## Consequences of an incorrect distribution
+
+::: callout-tip
+## Distributions
+
+Understand the consequences of estimating a parametric survival model with an incorrect distribution.
+:::
+
+In short, the suitability of any distribution for your data depends on how well it fits the underlying data-generating process.
+
+Before implementing a model, we must give thought to the data generating process or the underlying mechanism or model that generates the observed data. We represent these processes through distributions--and the respective distributional parameters. Using an incorrect parametric distribution (Weibull for instance) when the true distribution is Gamma can result in biased parameter estimates, poor model fit, and inaccurate survival predictions (among other things) because the respective distribution parameters (shape and scale) are significantly different.
+
+## Appendix
+
+I grabbed a picture of how my professor organized these models. I've kept this happy snap filed away.
+
+![](survivalmodels.jpg)

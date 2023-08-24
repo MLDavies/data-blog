@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/peacekeeping_survival/peacekeep.html",
       "/posts/proxy-wiki-scrape/index.html",
       "/posts/pairwise_network/network_pairwise.html"
     ]
