@@ -1,10 +1,10 @@
 ---
-title: "Peacekeeping Missions and Event History (AKA Survival) Analysis"
+title: "Parametric Survival Analysis: UN Peacekeeping Missions"
 # subtitle: "Maximum Likelihood Estimation"
 author: "Michael L. Davies"
 date: "Aug 08, 2023"
 #format: docx
-categories: [R, survival-analysis, war, peacekeeping]
+categories: [R, Python, survival-analysis, war, peacekeeping]
 format:
   html:
     # embed-resources: true
@@ -31,9 +31,9 @@ execute:
 
 ![Image Source: https://peacekeeping.un.org/en/department-of-peace-operations](peacekeep_img.jpg)
 
-This topic has been on my mind for a while. The relationship between war type and the duration of subsequent peacekeeping missions almost certainly varies widely.
+This topic has been on my mind for a while. I theorize (based on nothing but my gut) that there might be a relationship between duration of a peacekeeping mission and the type of war that just occurred. 
 
-Specifically, I theorize (based on nothing but my gut) that *civil wars* have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking---all of which represent challenges to peacekeeping.
+It seems plausible that *civil wars* have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking---all of which represent challenges to peacekeeping missions.
 
 On the other hand, generally speaking, *interstate wars* might have more clearly defined objectives and could be resolved more swiftly through diplomatic means or clearly defined peace agreements, leading to comparatively shorter peacekeeping mission durations.
 
@@ -43,7 +43,9 @@ On the other hand, generally speaking, *interstate wars* might have more clearly
 Wars vary widely in terms of internal and external dynamics---most of which linger as peacekeeping missions try to stabilize the situation. Is there a relationship between war type and peacekeeping mission duration?
 :::
 
-So, here I will conduct a *parametric event history* (AKA survival) analysis utilizing UN peacekeeping data. I will two of the three conflict types: civil, interst, and icw.
+So, here I will conduct a *parametric event history* (AKA survival) analysis, a statistical technique that unravels "time-to-event" data. The "event" in this case is the completion of the peacekeeping mission for each type of war: civil war (civil), interstate war (interst), and intrastate war (icw).
+
+I will fit several parametric survival models using different distributions. Last, I'll look at the (non-parametric) Cox proportional hazards model, which offers an alternative perspective on analyzing covariate effects. 
 
 ```{r}
 #| eval: false
