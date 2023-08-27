@@ -31,7 +31,7 @@ execute:
 
 ![Image Source: https://peacekeeping.un.org/en/department-of-peace-operations](peacekeep_img.jpg)
 
-This topic has been on my mind for a while. I theorize (based on nothing but my gut) that there might be a relationship between duration of a peacekeeping mission and the type of war that just occurred. 
+This topic has been on my mind for a while. I theorize (based on nothing but my gut) that there might be a relationship between the duration of a peacekeeping mission and the type of war that just occurred.
 
 It seems plausible that *civil wars* have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking---all of which represent challenges to peacekeeping missions.
 
@@ -45,7 +45,50 @@ Wars vary widely in terms of internal and external dynamics---most of which ling
 
 So, here I will conduct a *parametric event history* (AKA survival) analysis, a statistical technique that unravels "time-to-event" data. The "event" in this case is the completion of the peacekeeping mission for each type of war: civil war (civil), interstate war (interst), and intrastate war (icw).
 
-I will fit several parametric survival models using different distributions. Last, I'll look at the (non-parametric) Cox proportional hazards model, which offers an alternative perspective on analyzing covariate effects. 
+Obviously, there are several steps in this process. Even more confusing is the multitude of different models. Keeping everything straight can be a bit messy: parametric vs. non-parametric models, proportional hazards vs. accelerated failure time models, monotonic vs. non-monotonic distributions, and the various combinations.
+
+I grabbed a happy snap of how these models were summarized on the white board. I've kept this happy snap filed away.
+
+![](survivalmodels_crop.jpg)
+
+- PH: Proportional hazards 
+- AFT: Accelerated Failure time
+
+
+In short/general, we can say that Kaplan-Meier estimation provides descriptive survival information, while the catalog of parametric models and Cox models offer more advanced statistical analysis of survival data, allowing for hypothesis testing and the examination of covariate effects. They can be used together to provide a comprehensive understanding of survival patterns and relationships.
+
+
+```{mermaid}
+%%| fig-width: 6.5
+%%| fig-align: 'center'
+%%| eval: false
+%%| echo: false
+flowchart LR
+subgraph "Four"
+id21(If estimating PH, test assumptions)
+end
+
+subgraph "Three"
+id20(Plot, predict) 
+end
+
+subgraph "Two"
+id3(Model Estimation) --> id4(Parametric Models) 
+id3(Model Estimation) --> id5(Non-parametric Models)
+id4(Parametric Models) --> id6([Generalized Gamma]) 
+id6([Generalized Gamma]) --> id7([Weibull/Exponential])
+id7([Weibull/Exponential]) --> id8([log-log])
+id8([log-log]) --> id9([log-normal])
+id9([log-normal]) --> id10([Gompertz])
+id5(Non-parametric Models) --> id11([Cox])
+end
+
+subgraph "One"
+id1(Examine observed survival function) --> id2([Kaplan-Meier Estimation]) 
+end
+```
+
+I will fit a few parametric survival models using different distributions. Last, I'll look at the (non-parametric) Cox proportional hazards model, which offers an alternative perspective on analyzing covariate effects.
 
 ```{r}
 #| eval: false
@@ -607,8 +650,4 @@ In short, the suitability of any distribution for your data depends on how well 
 
 Before implementing a model, we must give thought to the data generating process or the underlying mechanism or model that generates the observed data. We represent these processes through distributions--and the respective distributional parameters. Using an incorrect parametric distribution (Weibull for instance) when the true distribution is Gamma can result in biased parameter estimates, poor model fit, and inaccurate survival predictions (among other things) because the respective distribution parameters (shape and scale) are significantly different.
 
-## Appendix
 
-I grabbed a picture of how my professor organized these models. I've kept this happy snap filed away.
-
-![](survivalmodels.jpg)

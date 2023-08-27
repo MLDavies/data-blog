@@ -9,7 +9,7 @@
 <meta name="author" content="Michael L. Davies">
 <meta name="dcterms.date" content="2023-08-08">
 
-<title>Michael L. Davies - Peacekeeping Missions and Event History (AKA Survival) Analysis</title>
+<title>Michael L. Davies - Parametric Survival Analysis: UN Peacekeeping Missions</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -95,6 +95,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -161,7 +164,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#monotonic-and-non-monotonic-distributions" id="toc-monotonic-and-non-monotonic-distributions" class="nav-link" data-scroll-target="#monotonic-and-non-monotonic-distributions">Monotonic and non-monotonic distributions</a></li>
   <li><a href="#estimate-a-cox-model" id="toc-estimate-a-cox-model" class="nav-link" data-scroll-target="#estimate-a-cox-model">Estimate a Cox model</a></li>
   <li><a href="#consequences-of-an-incorrect-distribution" id="toc-consequences-of-an-incorrect-distribution" class="nav-link" data-scroll-target="#consequences-of-an-incorrect-distribution">Consequences of an incorrect distribution</a></li>
-  <li><a href="#appendix" id="toc-appendix" class="nav-link" data-scroll-target="#appendix">Appendix</a></li>
   </ul>
 </nav>
     </div>
@@ -170,9 +172,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Peacekeeping Missions and Event History (AKA Survival) Analysis</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Show the code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Parametric Survival Analysis: UN Peacekeeping Missions</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Show the code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
   <div class="quarto-categories">
     <div class="quarto-category">R</div>
+    <div class="quarto-category">Python</div>
     <div class="quarto-category">survival-analysis</div>
     <div class="quarto-category">war</div>
     <div class="quarto-category">peacekeeping</div>
@@ -211,8 +214,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figcaption class="figure-caption">Image Source: https://peacekeeping.un.org/en/department-of-peace-operations</figcaption>
 </figure>
 </div>
-<p>This topic has been on my mind for a while. The relationship between war type and the duration of subsequent peacekeeping missions almost certainly varies widely.</p>
-<p>Specifically, I theorize (based on nothing but my gut) that <em>civil wars</em> have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking—all of which represent challenges to peacekeeping.</p>
+<p>This topic has been on my mind for a while. I theorize (based on nothing but my gut) that there might be a relationship between the duration of a peacekeeping mission and the type of war that just occurred.</p>
+<p>It seems plausible that <em>civil wars</em> have dynamics that exacerbate peacekeeping missions. Civil wars represent neighbors fighting for control of terrain and power over the respective inhabitants. Grievances commonly persist beyond the resolution of open conflict. Peace is fragile and vulnerable to spoilers, grudges, and revenge-seeking—all of which represent challenges to peacekeeping missions.</p>
 <p>On the other hand, generally speaking, <em>interstate wars</em> might have more clearly defined objectives and could be resolved more swiftly through diplomatic means or clearly defined peace agreements, leading to comparatively shorter peacekeeping mission durations.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -227,7 +230,25 @@ In short:
 <p>Wars vary widely in terms of internal and external dynamics—most of which linger as peacekeeping missions try to stabilize the situation. Is there a relationship between war type and peacekeeping mission duration?</p>
 </div>
 </div>
-<p>So, here I will conduct a <em>parametric event history</em> (AKA survival) analysis utilizing UN peacekeeping data. I will two of the three conflict types: civil, interst, and icw.</p>
+<p>So, here I will conduct a <em>parametric event history</em> (AKA survival) analysis, a statistical technique that unravels “time-to-event” data. The “event” in this case is the completion of the peacekeeping mission for each type of war: civil war (civil), interstate war (interst), and intrastate war (icw).</p>
+<p>Obviously, there are several steps in this process. Even more confusing is the multitude of different models. Keeping everything straight can be a bit messy: parametric vs.&nbsp;non-parametric models, proportional hazards vs.&nbsp;accelerated failure time models, monotonic vs.&nbsp;non-monotonic distributions, and the various combinations.</p>
+<p>I grabbed a happy snap of how these models were summarized on the white board. I’ve kept this happy snap filed away.</p>
+<p><img src="survivalmodels_crop.jpg" class="img-fluid"></p>
+<ul>
+<li>PH: Proportional hazards</li>
+<li>AFT: Accelerated Failure time</li>
+</ul>
+<p>In short/general, we can say that Kaplan-Meier estimation provides descriptive survival information, while the catalog of parametric models and Cox models offer more advanced statistical analysis of survival data, allowing for hypothesis testing and the examination of covariate effects. They can be used together to provide a comprehensive understanding of survival patterns and relationships.</p>
+<div class="cell" data-fig-width="6.5" data-eval="false" data-layout-align="center">
+<div class="cell-output-display">
+<div>
+<div>
+
+</div>
+</div>
+</div>
+</div>
+<p>I will fit a few parametric survival models using different distributions. Last, I’ll look at the (non-parametric) Cox proportional hazards model, which offers an alternative perspective on analyzing covariate effects.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -387,7 +408,7 @@ Important
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  my_gg_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>We can use the <code>summary()</code> to find the probability of surviving to 1 year, which is approximately 20%. (Note: the time variable in the data is actually in days, so we need to use times = 365.25)</p>
@@ -422,7 +443,7 @@ Important
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  my_gg_theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -466,7 +487,7 @@ Important
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
@@ -536,7 +557,7 @@ Important
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-11-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -774,7 +795,7 @@ AIC = 400.692</code></pre>
    number of observations = 54
 number of events observed = 39
            log-likelihood = -196.38
-         time fit was run = 2023-08-24 02:26:58 UTC
+         time fit was run = 2023-08-27 18:54:06 UTC
 
 ---
                     coef  exp(coef)   se(coef)   coef lower 95%   coef upper 95%  exp(coef) lower 95%  exp(coef) upper 95%
@@ -808,7 +829,7 @@ log-likelihood ratio test = 1.90 on 3 df
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.show()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -940,7 +961,7 @@ rho_      0.636418   0.076044        0.487374  ... -4.781193  0.000002  19.13034
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>plt.show()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
@@ -967,7 +988,7 @@ sigma_  1.527447  0.182320        1.170107  ...   2.892978  3.816083e-03    8.03
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>plt.show()<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-22-3.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-23-3.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </div>
@@ -1093,7 +1114,7 @@ interst   -0.872107   0.418070  0.504038  ... -1.730241  0.083587  3.580575
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="peacekeep_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<p><img src="peacekeep_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="question-5" class="level2">
@@ -1183,11 +1204,6 @@ Distributions
 </div>
 <p>In short, the suitability of any distribution for your data depends on how well it fits the underlying data-generating process.</p>
 <p>Before implementing a model, we must give thought to the data generating process or the underlying mechanism or model that generates the observed data. We represent these processes through distributions–and the respective distributional parameters. Using an incorrect parametric distribution (Weibull for instance) when the true distribution is Gamma can result in biased parameter estimates, poor model fit, and inaccurate survival predictions (among other things) because the respective distribution parameters (shape and scale) are significantly different.</p>
-</section>
-<section id="appendix" class="level2">
-<h2 class="anchored" data-anchor-id="appendix">Appendix</h2>
-<p>I grabbed a picture of how my professor organized these models. I’ve kept this happy snap filed away.</p>
-<p><img src="survivalmodels.jpg" class="img-fluid"></p>
 
 
 </section>
