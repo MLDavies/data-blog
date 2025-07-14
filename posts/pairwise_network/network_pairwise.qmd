@@ -25,15 +25,17 @@ execute:
   echo: true
 ---
 
-During the height of the Syrian civil war, many of us watching from afar were puzzled when "moderate" insurgent groups would jump into bed (or alliances) with hardliners or jihadists. The Syrian conflict had hundreds, maybe thousands, of armed groups forming various kinds of alliances, then divorcing only to reconcile again.
+During the height of the Syrian civil war, many of us watching from afar were puzzled when *“moderate”* insurgent groups aligned themselves with hardliners or jihadists. The conflict featured hundreds—perhaps thousands—of armed groups forming various kinds of alliances, only to break apart and later reconcile.
 
-A lot is made of the role of ideology when armchair commanders (like myself) comment as these disasters play out. On the other hand, alliances could be a pragmatic choice. By aggregating combat power, armed groups might increase their chances of survival---even if only to turn on each other at a later stage.
+A lot is made of the role of ideology when armchair commanders (like myself) comment on these unfolding disasters. But alliances can also be pragmatic choices. By aggregating combat power, armed groups might increase their chances of survival—even if only to turn on each other at a later stage.
 
-In fact, I recently read a compelling argument on this topic: "Alliance Formation in Civil Wars" by Fotini Christia.[^1] In this book, Christia states: "It would be natural to suppose that warring groups form alliances based on shared identity considerations---such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists---but this is not what we see."
+Recently, I came across a compelling argument in *Alliance Formation in Civil Wars by Fotini Christia.*[^1] In this book, Christia states: *"It would be natural to suppose that warring groups form alliances based on shared identity considerations—such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists—but this is not what we see."*
 
 [^1]: Fotini Christia, "[Alliance Formation in Civil Wars](https://www.amazon.com/Alliance-Formation-Professor-Fotini-Christia/dp/1107683483/ref=sr_1_1?keywords=alliance+formation+in+civil+wars&qid=1692661337&s=books&sprefix=alliance+formation%2Cstripbooks%2C100&sr=1-1)".
 
-So, with that motivation, I decided to explore what we could find among Syrian armed groups. When coalitions of Syrian armed groups engaged in battles, they frequently partnered with several groups. So, my question was: would groups tolerate fighting alongside other groups that are ideological enemies? So, I'm focusing on pairwise relationships, even when there are many groups in the alliance.
+With that motivation in mind, I decided to explore what we could learn from Syrian armed group coalitions. When these groups engaged in battle, they frequently partnered with multiple other factions. This raised a key question for me: **Would groups tolerate fighting alongside ideological enemies?**
+
+So, I focused on **pairwise relationships**, even within multi-group alliances.
 
 ```{r}
 #| label: libraries
@@ -53,12 +55,22 @@ library(devtools)
 ::: callout-important
 ## A love affair with ACLED data!
 
-I came across the [Armed Conflict Location & Event Data Project(ACLED)](www.acleddata.com) a few years ago. What an amazing resource. ACLED is a disaggregated data collection, analysis, and crisis mapping project. The ACLED team collects real time and historical data on political violence and protest events in nearly 100 countries. In short, it's awesome.[^2]
+I came across the [Armed Conflict Location & Event Data Project (ACLED)](https://www.acleddata.com) a few years ago—and what an amazing resource.
+
+ACLED is a disaggregated data collection, analysis, and crisis mapping project. The ACLED team collects both real-time and historical data on political violence and protest events across nearly 100 countries.
+
+In short, it's an outstanding tool for understanding the dynamics of conflict.
+.[^2]
 :::
 
-[^2]: [Data from The Armed Conflict Location & Event Data Project (ACLED)](acleddata.com/) was accessed spring of 2021. Given the hieght of the Syrian conflict occured before this time, I chose to re-use this data for this project.
+[^2]: I accessed the [data from The Armed Conflict Location & Event Data Project (ACLED)](https://www.acleddata.com) in the spring of 2021.
 
-ACLED data is robust, with many columns and over many years. In this dataset, `actor` (along with `assoc_actor_1` acts in some (usually bad) way on `actor2`. So, I'm only concerned with the `actor1` and `assoc_actor_1` columns. Let's just take a quick peak:
+ACLED data is robust, with many columns and coverage spanning multiple years. In this dataset, the `actor1` column (along with `assoc_actor_1`) represents entities that are acting together—typically in some form of violence—against `actor2`.
+
+For this analysis, I'm only concerned with `actor1` and `assoc_actor_1`, since I'm interested in **collaborations**, not opponents. These columns capture groups that are working together during a reported event.
+
+Let's take a quick peek at the data:
+
 
 ```{r}
 
@@ -69,7 +81,7 @@ read_csv("df_acled_syr_2017_2021.csv") |>
   knitr::kable()
 ```
 
- 
+
 
 I need select the columns of interest and then filter down to battle related events (filtering out `Protests`, `Riots`, and `Violence against civilians`)
 
@@ -86,7 +98,7 @@ df_acled_syr <-
          assoc_actor_1 = str_squish(assoc_actor_1)) 
 ```
 
- 
+
 
 Here's the difficult part. The reduced ACLED data looks akin to this:
 
@@ -98,7 +110,7 @@ Here's the difficult part. The reduced ACLED data looks akin to this:
   knitr::kable()
 ```
 
- 
+
 
 For what I'm interested in, I need to get the pairwise combinations. So, I need to work out and test the code to accomplish this. A huge thanks to [Dusty Turner](https://dustysturner.com/).[^3] In fact, this chunk is largely thanks to his generosity.
 
@@ -134,7 +146,7 @@ test |>
 
 ```
 
- 
+
 
 That looks good! Let's apply it to the ACLED data.
 
@@ -166,7 +178,7 @@ reshaped_df <- df_acled_syr |>
   bind_rows(df_separate)
 ```
 
- 
+
 
 Ok, I have to confess. This next part stumped me and took forever. First, a huge shout out to Wikipedia contributors. There are soooo many actors in the dataset. I spend much more time than intended trying to consolidate them, constantly referencing Wikipedia to figure out what's going on.
 
@@ -233,7 +245,7 @@ df_acled_actors <-
          assoc_actor_1 != "Other")
 ```
 
- 
+
 
 Let's check out what the numbers look like for the top 10 most operationally-active groups. How many joint (aka partnered) operations does each group conduct - measured as a percentage of overall joint operations?
 
@@ -252,7 +264,7 @@ datatable(df_acled_actors %>%
 
 ```
 
- 
+
 
 Clearly, we expect Hayat Tahrir al-Sham to be a prominent player.
 
