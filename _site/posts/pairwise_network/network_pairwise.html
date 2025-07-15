@@ -6,8 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Michael L. Davies">
-<meta name="dcterms.date" content="2023-08-22">
+<meta name="author" content="Michael Davies">
+<meta name="dcterms.date" content="2022-08-22">
 <meta name="description" content="Conflict makes for strange bedfellows">
 
 <title>Michael L. Davies - Insurgent (Pairwise) Networks</title>
@@ -97,15 +97,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
-<script src="../../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<link href="../../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="../../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <link href="../../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="../../site_libs/datatables-binding-0.28/datatables.js"></script>
+<script src="../../site_libs/datatables-binding-0.33/datatables.js"></script>
 <script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
-<link href="../../site_libs/dt-core-1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="../../site_libs/dt-core-1.13.4/css/jquery.dataTables.extra.css" rel="stylesheet">
-<script src="../../site_libs/dt-core-1.13.4/js/jquery.dataTables.min.js"></script>
-<link href="../../site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
-<script src="../../site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="../../site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="../../site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+<script src="../../site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="../../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+<script src="../../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -173,7 +174,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title">Insurgent (Pairwise) Networks</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Show the code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
-<p class="subtitle lead">Conflict makes for strange bedfellows</p>
   <div class="quarto-categories">
     <div class="quarto-category">network analysis</div>
     <div class="quarto-category">R</div>
@@ -193,14 +193,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Michael L. Davies </p>
+             <p>Michael Davies </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 22, 2023</p>
+      <p class="date">August 22, 2022</p>
     </div>
   </div>
   
@@ -210,10 +210,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>During the height of the Syrian civil war, many of us watching from afar were puzzled when “moderate” insurgent groups would jump into bed (or alliances) with hardliners or jihadists. The Syrian conflict had hundreds, maybe thousands, of armed groups forming various kinds of alliances, then divorcing only to reconcile again.</p>
-<p>A lot is made of the role of ideology when armchair commanders (like myself) comment as these disasters play out. On the other hand, alliances could be a pragmatic choice. By aggregating combat power, armed groups might increase their chances of survival—even if only to turn on each other at a later stage.</p>
-<p>In fact, I recently read a compelling argument on this topic: “Alliance Formation in Civil Wars” by Fotini Christia.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> In this book, Christia states: “It would be natural to suppose that warring groups form alliances based on shared identity considerations—such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists—but this is not what we see.”</p>
-<p>So, with that motivation, I decided to explore what we could find among Syrian armed groups. When coalitions of Syrian armed groups engaged in battles, they frequently partnered with several groups. So, my question was: would groups tolerate fighting alongside other groups that are ideological enemies? So, I’m focusing on pairwise relationships, even when there are many groups in the alliance.</p>
+<p>During the height of the Syrian civil war, many of us watching from afar were puzzled when <em>“moderate”</em> insurgent groups aligned themselves with hardliners or jihadists. The conflict featured hundreds—perhaps thousands—of armed groups forming various kinds of alliances, only to break apart and later reconcile.</p>
+<p>A lot is made of the role of ideology when armchair commanders (like myself) comment on these unfolding disasters. But alliances can also be pragmatic choices. By aggregating combat power, armed groups might increase their chances of survival—even if only to turn on each other at a later stage.</p>
+<p>Recently, I came across a compelling argument in <em>Alliance Formation in Civil Wars by Fotini Christia.</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> In this book, Christia states: <em>“It would be natural to suppose that warring groups form alliances based on shared identity considerations—such as Christian groups allying with Christian groups or Muslim groups with their fellow co-religionists—but this is not what we see.”</em></p>
+<p>With that motivation in mind, I decided to explore what we could learn from Syrian armed group coalitions. When these groups engaged in battle, they frequently partnered with multiple other factions. This raised a key question for me: <strong>Would groups tolerate fighting alongside ideological enemies?</strong></p>
+<p>So, I focused on <strong>pairwise relationships</strong>, even within multi-group alliances.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -239,10 +240,14 @@ A love affair with ACLED data!
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>I came across the <a href="www.acleddata.com">Armed Conflict Location &amp; Event Data Project(ACLED)</a> a few years ago. What an amazing resource. ACLED is a disaggregated data collection, analysis, and crisis mapping project. The ACLED team collects real time and historical data on political violence and protest events in nearly 100 countries. In short, it’s awesome.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>I came across the <a href="https://www.acleddata.com">Armed Conflict Location &amp; Event Data Project (ACLED)</a> a few years ago—and what an amazing resource.</p>
+<p>ACLED is a disaggregated data collection, analysis, and crisis mapping project. The ACLED team collects both real-time and historical data on political violence and protest events across nearly 100 countries.</p>
+<p>In short, it’s an outstanding tool for understanding the dynamics of conflict. .<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 </div>
 </div>
-<p>ACLED data is robust, with many columns and over many years. In this dataset, <code>actor</code> (along with <code>assoc_actor_1</code> acts in some (usually bad) way on <code>actor2</code>. So, I’m only concerned with the <code>actor1</code> and <code>assoc_actor_1</code> columns. Let’s just take a quick peak:</p>
+<p>ACLED data is robust, with many columns and coverage spanning multiple years. In this dataset, the <code>actor1</code> column (along with <code>assoc_actor_1</code>) represents entities that are acting together—typically in some form of violence—against <code>actor2</code>.</p>
+<p>For this analysis, I’m only concerned with <code>actor1</code> and <code>assoc_actor_1</code>, since I’m interested in <strong>collaborations</strong>, not opponents. These columns capture groups that are working together during a reported event.</p>
+<p>Let’s take a quick peek at the data:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -310,7 +315,6 @@ A love affair with ACLED data!
 </table>
 </div>
 </div>
-<p>&nbsp;</p>
 <p>I need select the columns of interest and then filter down to battle related events (filtering out <code>Protests</code>, <code>Riots</code>, and <code>Violence against civilians</code>)</p>
 <div class="cell">
 <details>
@@ -326,7 +330,6 @@ A love affair with ACLED data!
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">assoc_actor_1 =</span> <span class="fu">str_squish</span>(assoc_actor_1)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>&nbsp;</p>
 <p>Here’s the difficult part. The reduced ACLED data looks akin to this:</p>
 <div class="cell">
 <details>
@@ -361,7 +364,6 @@ A love affair with ACLED data!
 </table>
 </div>
 </div>
-<p>&nbsp;</p>
 <p>For what I’m interested in, I need to get the pairwise combinations. So, I need to work out and test the code to accomplish this. A huge thanks to <a href="https://dustysturner.com/">Dusty Turner</a>.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> In fact, this chunk is largely thanks to his generosity.</p>
 <div class="cell">
 <details>
@@ -449,7 +451,6 @@ A love affair with ACLED data!
 </table>
 </div>
 </div>
-<p>&nbsp;</p>
 <p>That looks good! Let’s apply it to the ACLED data.</p>
 <div class="cell">
 <details>
@@ -480,7 +481,6 @@ A love affair with ACLED data!
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(df_separate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>&nbsp;</p>
 <p>Ok, I have to confess. This next part stumped me and took forever. First, a huge shout out to Wikipedia contributors. There are soooo many actors in the dataset. I spend much more time than intended trying to consolidate them, constantly referencing Wikipedia to figure out what’s going on.</p>
 <p>Second, I needed to clean and consolidate the actors, and then remove the non-opposition groups as well as the non-armed-opposition groups. I tried several ways to make happen much more parsimoniously with <code>sapply</code> and <code>purrr::map</code> and a two-column lookup table, but it beat me. If you have suggestions, I’m eager to hear them.</p>
 <div class="cell">
@@ -545,7 +545,6 @@ A love affair with ACLED data!
 <span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>         assoc_actor_1 <span class="sc">!=</span> <span class="st">"Other"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>&nbsp;</p>
 <p>Let’s check out what the numbers look like for the top 10 most operationally-active groups. How many joint (aka partnered) operations does each group conduct - measured as a percentage of overall joint operations?</p>
 <div class="cell">
 <details>
@@ -564,11 +563,10 @@ A love affair with ACLED data!
 </details>
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-c99321785f0f7c60b61a" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-c99321785f0f7c60b61a">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],["Hayat Tahrir al Sham","Faylaq al Rahman","Hamza Division","Turkistan Islamic Party","Faylaq al Sham","Army of the Revolutionaries","Ahrar al Sham","Nour al Din al Zinki","Sultan Murad","Ansar al Din","Levant Front","Lions of the East","Jaysh Sharqiya","Sultan Suleiman Shah","Kurdish Ethnic Militia"],[133,81,64,44,42,40,30,24,24,22,21,21,17,17,16],["22%","14%","11%","7%","7%","7%","5%","4%","4%","4%","4%","4%","3%","3%","3%"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Name<\/th>\n      <th>Partnered Ops<\/th>\n      <th>Percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-0843fc4d0d49015d9ff9" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-0843fc4d0d49015d9ff9">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],["Hayat Tahrir al Sham","Faylaq al Rahman","Hamza Division","Turkistan Islamic Party","Faylaq al Sham","Army of the Revolutionaries","Ahrar al Sham","Nour al Din al Zinki","Sultan Murad","Ansar al Din","Levant Front","Lions of the East","Jaysh Sharqiya","Sultan Suleiman Shah","Kurdish Ethnic Militia"],[133,81,64,44,42,40,30,24,24,22,21,21,17,17,16],["22%","14%","11%","7%","7%","7%","5%","4%","4%","4%","4%","4%","3%","3%","3%"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Name<\/th>\n      <th>Partnered Ops<\/th>\n      <th>Percent<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Name","targets":1},{"name":"Partnered Ops","targets":2},{"name":"Percent","targets":3}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
-<p>&nbsp;</p>
 <p>Clearly, we expect Hayat Tahrir al-Sham to be a prominent player.</p>
 <p>Now to prep the data for graphing…</p>
 <div class="cell">
@@ -678,7 +676,7 @@ A love affair with ACLED data!
 <span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">draw_plot</span>(graphed) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="network_pairwise_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="768"></p>
+<p><img src="network_pairwise_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="768"></p>
 </div>
 </div>
 <p>Ahhh the tangled web they weave. I know I’ve been mixing metaphors.</p>
@@ -693,7 +691,7 @@ A love affair with ACLED data!
 
 <ol>
 <li id="fn1"><p>Fotini Christia, “<a href="https://www.amazon.com/Alliance-Formation-Professor-Fotini-Christia/dp/1107683483/ref=sr_1_1?keywords=alliance+formation+in+civil+wars&amp;qid=1692661337&amp;s=books&amp;sprefix=alliance+formation%2Cstripbooks%2C100&amp;sr=1-1">Alliance Formation in Civil Wars</a>”.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p><a href="acleddata.com/">Data from The Armed Conflict Location &amp; Event Data Project (ACLED)</a> was accessed spring of 2021. Given the hieght of the Syrian conflict occured before this time, I chose to re-use this data for this project.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>I accessed the <a href="https://www.acleddata.com">data from The Armed Conflict Location &amp; Event Data Project (ACLED)</a> in the spring of 2021.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>Major <a href="https://dustysturner.com/">Dusty Turner</a>, U.S. Army is a monster coder and overall big brain. I’ve leaned on him for a number of problems. He consistently digs me out of a hole – all while cracking a joke.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>The Armed Conflict Location &amp; Event Data Project (ACLED), <a href="https://acleddata.com/2023/07/26/actor-profile-hayat-tahrir-al-sham-hts">Actor Profile: Hayat Tahrir al-Sham (HTS) 26 July 2023</a>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>

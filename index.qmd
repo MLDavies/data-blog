@@ -27,9 +27,9 @@ I'm a former professional dancer and U.S. Army Reservist turned government analy
 
 This is where I come to play with data, test ideas, and explore the intersections of society, the arts, and conflict. I've always been intrigued by the passions and dynamics that drive people and systems. This blog is my platform for examining those forces through the lens of data science.
 
-Let me be clear: I make no claims that anything here would pass academic muster. Think of this more as stumbling into a private studio or workshop. I aim to be thoughtful and thorough, but you won’t find peer-reviewed publications.
+Let me be clear: I make no claims that anything here would pass academic muster. Think of this more as stumbling into a private studio or workshop. I aim to be thoughtful and thorough, but you won't find peer-reviewed publications.
 
-So poke around. I hope you find something interesting. If it’s useful, steal it. If you have thoughts or suggestions, I’d love to hear them.
+So poke around. I hope you find something interesting. If it's useful, steal it. If you have thoughts or suggestions, I'd love to hear them.
 
 Thanks for stopping by.
 :::
