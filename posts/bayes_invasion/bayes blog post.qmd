@@ -1,0 +1,527 @@
+---
+title: "Bayes and the Battlefield"
+subtitle: "Reasoning Under Uncertainty"
+author: "Michael L. Davies"
+date: "July 27, 2025"
+categories: [bayes, war, forecasting, risk-analysis, probability]
+format:
+  html:
+    theme: flatly  # or another valid theme like "cosmo", "journal", etc.
+    self-contained: true
+    #math: mathjax
+    mermaid:
+      theme: neutral
+editor: visual
+toc: true
+execute: 
+  warning: false
+  message: false
+  error: false
+  echo: false
+---
+
+Predicting rare events is hard.
+
+Consider geopolitical risk or national security research questions such as:
+
+-   **Will Russia invade Ukraine by early 2022?** (Assuming it's 2021.)\
+-   **Will China impose a naval blockade on Taiwan in the next 6 months?** (Assuming it's 2025.)\
+-   **Will a military coup occur in Niger before year-end?** (Assuming it's 2025.)
+
+These questions are hard because they combine **ambiguity**, **sparse data**, and **cognitive traps**.
+
+If only there were a straightforward approach that could manage the ambiguity, address the sparse data, and avoid the cognitive traps.
+
+That's precisely where **Bayesian thinking** shines---offering a principled, transparent way to reason under uncertainty in contexts like these.
+
+::: {.callout-note title="Acknowledgment"}
+This blog owes a major intellectual debt to *Political/Military Applications of Bayesian Analysis: Methodological Issues* by Douglas E. Hunter (Westview Press, 1984). That foundational work clarified how Bayesian reasoning could be rigorously applied to ambiguous, high-stakes geopolitical problems --- long before it became popular in modern analytics. Much of the structure, logic, and motivation for this blog follows directly from that vision.
+:::
+
+### TL,DR
+
+**This framework answers a simple but powerful question: How likely is each hypothesis** $(H_i)$ given the actual evidence $(E)$ we've observed?
+
+::: {.callout-tip collapse="true" title="General Probability Tree"}
+To keep things digestible, the diagram below focuses on the *observed* evidence --- that is, how probable each hypothesis makes the actual data we've seen.
+
+But in a complete Bayesian model, we could (and often should) also consider the **complement**: What if the data hadn't shown up? What if troop movements weren't observed?
+
+This is especially relevant when:
+
+-   The **absence** of evidence is itself informative\
+-   You're modeling **repeated evidence/no-evidence cycles** (e.g., sensor networks, intelligence gaps)\
+-   You want to build a **full generative model** that accounts for all possible outcomes
+
+In that case, each hypothesis branches into both:
+
+-   $( P(E \mid H_i) )$: the probability of *seeing* the evidence if $( H_i )$ is true\
+-   $( P(\neg E \mid H_i) )$: the probability of *not* seeing it under that same hypothesis
+
+We're omitting $( \neg E )$ for clarity --- but it's always there in the background if you're building a full generative model.
+
+This structure will make more sense as you read on.
+:::
+
+```{mermaid}
+
+flowchart LR
+  Start{{"Initial State"}}
+
+  %% Hypotheses
+  Start --> H1["H₁: Hypothesis 1\nP(H₁)"]
+  Start --> H2["H₂: Hypothesis 2\nP(H₂)"]
+  Start --> H3["H₃: Hypothesis 3\nP(H₃)"]
+
+  %% Evidence branches from H1
+  H1 --> E1["P(E | H₁)"]
+  H1 --> NE1["P(¬E | H₁)"]
+
+  %% Evidence branches from H2
+  H2 --> E2["P(E | H₂)"]
+  H2 --> NE2["P(¬E | H₂)"]
+
+  %% Evidence branches from H3
+  H3 --> E3["P(E | H₃)"]
+  H3 --> NE3["P(¬E | H₃)"]
+```
+
+::: {.callout-caution title="Not Quantitative, Not Qualitative"}
+**Caveat:** This approach may look *quantitative* to qualitative analysts --- and *qualitative* to quantitative analysts. In truth, it's neither in the traditional sense...yet! (foreshadowing for subsequent posts)
+
+What you're seeing is a **structured reasoning framework**. It doesn't require hard numbers or equations to be useful. It simply brings clarity, consistency, and transparency to judgment-based analysis.
+
+In fact, I'd argue that most strong analytic arguments --- even when informal --- *implicitly* follow this structure. The difference here is that we're doing it **intentionally** and **explicitly**.
+
+This isn't about turning qualitative work into numbers. It's about making our reasoning visible, repeatable, and accountable.
+:::
+
+## 💡 The Core Idea
+
+The logic of Bayes Theorem is built on **the definition of conditional probability**, which helps us find the probability of event $A$ happening given that event $B$ has already occurred: the probability of $A$ given $B$ is the probability of $A$ *and* $B$ divided by the probability of $B$.
+
+$$
+P(A \mid B) = \frac{P(A \cap B)}{P(B)}
+$$
+
+**So, the national security question is now formulated as**:
+
+*What is the probability of Russia invading Ukraine by early 2022 given observed Russian troop movements to the border?*
+
+::: {.callout-important icon="lightbulb" collapse="true"}
+## Deriving Bayes' Theorem (Drop down if you dare!)
+
+It's actually not too bad.
+
+Because $P(A \cap B) = P(B \cap A)$, we can **flip the conditional**:
+
+$$
+P(A \cap B) = P(B \mid A) \cdot P(A)
+$$
+
+Substitute into the original formula:
+
+$$
+P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}
+$$
+
+This is **Bayes' Theorem**. It allows you to reason backward---from a known likelihood $P(B \mid A)$ and prior $P(A)$, to an updated belief $P(A \mid B)$.
+
+
+
+## 🔁 Summary Visual Mapping
+
+| Concept                 | Equation                                            | Visual Idea                                     |
+|------------------|-------------------------------|-----------------------|
+| Conditional Probability | $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$            | What portion of $B$ also satisfies $A$          |
+| Joint from Conditional  | $P(A \cap B) = P(B \mid A) \cdot P(A)$              | Flip the lens: assume $A$ first                 |
+| Bayes' Theorem          | $P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$ | Invert the condition using prior and likelihood |
+:::
+
+With some rearranging and substitution, we get **Bayes' Theorem**. Stating Bayes' Rule in plain terms and more formally:
+
+$$
+\begin{aligned}
+\textbf{Bayes' Rule (Plain Terms):} \quad 
+\text{Posterior} &= \frac{\text{Prior} \times \text{Likelihood}}{\text{Evidence}}\\[3ex]
+\textbf{Bayes' Rule (Formal):} \quad 
+P(H_i \mid E) &= \frac{P(H_i) \cdot P(E \mid H_i)}{\sum_j P(H_j) \cdot P(E \mid H_j)} 
+\end{aligned}
+$$
+
+This reads as: The probability of a hypothesis given the new evidence (posterior) is equal to our belief before seeing the data (prior), multiplied by how likely the evidence is under that hypothesis (likelihood), divided by the total probability of observing the evidence across all hypotheses (normalizing constant). And that is a mouthful.
+
+**So, we have four parts:**
+
+1.  **The prior** --- your belief about the hypothesis *before* seeing the new data (the baseline).
+2.  **The likelihood** --- how likely the observed evidence is, assuming each hypothesis is true.
+3.  **The normalizing constant** (or **marginal likelihood**) --- the probability of the evidence across all hypotheses.
+4.  **The posterior** --- your updated belief after accounting for the evidence.
+
+## 🧮 A Worked Example: Will Russia Invade Ukraine?
+
+Imagine it's fall 2021 and the world is watching Russia getting a little more squirrelly in Ukraine since its initial invasion in 2014. You consider three competing hypotheses:
+
+1.  $H_1$: Invasion - Russia will invade Ukraine by early 2022
+2.  $H_2$: Brinkmanship - Russia escalates tension but stops short
+3.  $H_3$: De-escalation - Russia de-escalates
+
+### The Set-Up: Prior, Likelihood and Normalizing Constant
+
+#### The Prior
+
+The *prior* is your best estimate of each hypothesis's likelihood, based on what you knew before the new evidence appeared. This step is often the most difficult and contentious step in Bayesian analysis: How do we establish a *prior* probability - particularly when we often have already seen the new evidence? (This is important --- the priors across all hypotheses must sum to 1.)
+
+One way to estimate a prior is to ask:
+
+In similar geopolitical conditions, how often did these scenarios result in invasion? For instance, history might show 3 "invasions" to 7 "non-invasions" under these same conditions.
+
+So, we might say our *prior* is equal to 3 / 10 or 0.30, giving us $H_1$: Russia will invade Ukraine by early 2022 of 0.30.
+
+::: callout-tip
+The logical implication is that there is a 0.7 probability that one or more alternative options can occur. If we're just interested in how likely Russia is to invade, it might be sufficient to carry out the analysis with $H_2$ = 0.7 that Russia will *not* invade.
+
+However, we can make the question a little more demanding. So, here we evaluate three hypotheses.
+:::
+
+After reviewing historical data and hashing it out among analysts, we settle on the following priors:
+
+-   $P(H_1) = 0.30$ - Invasion
+-   $P(H_2) = 0.50$ - Brinkmanship
+-   $P(H_3) = 0.20$ - De-escalation
+
+Then, new evidence $( E_1 )$ appears: We obtain imagery of Russian troop movements massing in proximity of the Ukraine border.
+
+#### The likelihood
+
+We now assess how likely it is that we would observe this data under each scenario. One by one, how likely is it that we'd observe this data (troop movements to the border) under each hypothesis? Let's say the above evidence favors $H_1$: *Russia will invade Ukraine by early 2022*, and we arrive at:
+
+-   $P(E_1 \mid H_1) = 0.8$ -- **Invasion**: Troop buildups and supply chains are consistent with imminent invasion.
+-   $P(E_1 \mid H_2) = 0.6$ -- **Strategic brinkmanship**: Some military signaling and maneuvers fit escalation without full commitment.
+-   $P(E_1 \mid H_3) = 0.1$ -- **De-escalation**: Large troop movements are hard to reconcile with genuine de-escalation.
+
+::: {.callout-tip collapse="true" title="What Is Likelihood?"}
+Likelihood is easy to misunderstand. It's not the probability **of** the hypothesis --- it's the probability of the **evidence**, assuming the hypothesis is true.
+
+So when we say\
+$P(E_1 \mid H_1) = 0.8$,\
+we're saying: *If invasion is the true hypothesis, how likely is it that we'd see this troop movement?*
+
+Bayesian updating hinges on comparing these likelihoods across all competing hypotheses. A likelihood on its own tells us little --- the real insight comes from how well different hypotheses explain the same piece of evidence.
+
+It's also important to distinguish between **evidence** and **likelihood**. The evidence is the observation itself --- for example, satellite images of troop buildups. The likelihood is our estimate of how probable that observation is under each hypothesis.
+
+-   **Evidence** --- the actual data we observe (e.g., troop movements, diplomatic breakdowns).\
+-   **Likelihood** --- a model-based judgment about how well each hypothesis explains that evidence.
+
+This distinction matters: we don't directly calculate the probability of a hypothesis from the evidence. Instead, we assess how well each hypothesis accounts for the evidence --- and then update our beliefs accordingly using Bayes' Rule.
+:::
+
+To get the numerator for each hypothesis, we simply multiply each prior by each likelihood:
+
+$$
+\begin{aligned}
+P(H_1) \cdot P(E_1 \mid H_1) &= 0.30 \times 0.8 = 0.24 \\
+P(H_2) \cdot P(E_1 \mid H_2) &= 0.50 \times 0.6 = 0.30 \\
+P(H_3) \cdot P(E_1 \mid H_3) &= 0.20 \times 0.1 = 0.02 \\
+\end{aligned}
+$$
+
+After completing this step, we can already see which hypothesis is most probable. However, for the sake of completeness, let's continue...
+
+#### Denominator:
+
+We compute the total probability of this first piece of evidence $( E_1 )$ by summing over all hypotheses:
+
+$$
+\begin{aligned}
+P(E_1) &= \sum_{j=1}^{3} P(H_j) \cdot P(E_1 \mid H_j) \\
+     &= P(H_1) \cdot P(E_1 \mid H_1) + P(H_2) \cdot P(E_1 \mid H_2) + P(H_3) \cdot P(E_1 \mid H_3)\\
+     &= (0.30 \times 0.80) + (0.50 \times 0.60) + (0.20 \times 0.10) \\
+     &= 0.24 + 0.30 + 0.02 \\
+     &= 0.56
+\end{aligned}
+$$
+
+### 🧮 Evaluate the Posterior under each hypothesis
+
+Plug and play to find our updated belief(s).
+
+$$
+\begin{aligned}
+P(H_1 \mid E_1) &= \frac{0.24}{0.56} \approx 0.429 -\text{ Probability of Invasion} \\
+P(H_2 \mid E_1) &= \frac{0.30}{0.56} \approx 0.536 -\text{ Probability of Brinksmanship}\\
+P(H_3 \mid E_1) &= \frac{0.02}{0.56} \approx 0.036 -\text{ Probability of De-escalation}\\
+\end{aligned}
+$$
+
+### Decision trees help visualize this process
+
+```{mermaid}
+flowchart LR
+  A{{"Initial State"}}
+
+  subgraph Priors
+    B("P(Invasion) = 0.30")
+    C("P(Brinksmanship) = 0.50")
+    D("P(De-escalation) = 0.20")
+  end
+
+  subgraph Likelihoods
+    E("P(Troop buildup | Invasion) = 0.8")
+    F("P(Troop buildup | Brinksmanship) = 0.6")
+    G("P(Troop buildup | De-escalation) = 0.1")
+  end
+
+  subgraph Posteriors
+    H("P(Invasion | Troop buildup) = (0.30 × 0.8) / 0.56 = 0.429")
+    I("P(Brinksmanship | Troop buildup) = (0.50 × 0.6) / 0.56 = 0.536")
+    J("P(De-escalation | Troop buildup) = (0.20 × 0.1) / 0.56 = 0.036")
+  end
+
+  A --> B
+  A --> C
+  A --> D
+  B --> E --> H
+  C --> F --> I
+  D --> G --> J
+
+```
+
+::: {.callout-tip collapse="false" title="General Probability Tree"}
+To keep things focused and digestible, this example follows the path of observed evidence --- that is, how likely each hypothesis makes the actual evidence we've seen.
+
+But in a complete Bayesian model, we could (and sometimes should) also consider the **complement** of the evidence: what if the data hadn't shown up? What if troop movements weren't observed?
+:::
+
+So, after seeing the new data:
+
+-   The chance of **invasion** increases from 30% to **43%**\
+-   The chance of **continued tension** remains most likely at **54%**\
+-   The chance of **de-escalation** falls to just **4%**
+
+### Why It Matters
+
+This is how we **update beliefs** in light of evolving evidence. Starting from our priors, we revise the relative probabilities in light of the new evidence. While the probability of invasion has increased, the evidence still supports continued tension as the most likely scenario.
+
+Note: Bayesian reasoning doesn't claim certainty --- but it makes your assumptions explicit and your updates principled.
+
+We'll now explore how beliefs dynamically evolve **sequentially** as new events unfold...
+
+::: {.callout-note collapse="true"}
+# Events leading up to the invasion
+
+## Sequential Updates Before the Invasion
+
+Bayesian analysis is well-suited for tracking how beliefs shift over time in response to new information. Below is a timeline of key events from late 2021 to early 2022 that could be used as **informational updates** when estimating the probability of a Russian invasion of Ukraine.
+
+Each event serves as a potential data point $( E_t )$ in a sequential Bayesian update process.
+
+### 📅 Significant Events Prior to Russia's Full-Scale Invasion
+
+| Date             | Event Description                                                             | Potential Bayesian Impact                                       |
+|------------------|------------------------------|------------------------|
+| Apr--May 2021    | First major Russian troop buildup near Ukraine border                         | Early warning; raises baseline invasion probability             |
+| Nov 10, 2021     | U.S. satellite imagery confirms renewed Russian troop buildup                 | Evidence of sustained planning; updates likelihood for invasion |
+| Dec 7, 2021      | Biden--Putin virtual summit; Biden warns of sanctions                         | Diplomatic signaling; some chance for deterrence                |
+| Dec 17, 2021     | Russia issues sweeping security demands to NATO and U.S.                      | Raises stakes; suggests maximalist aims                         |
+| Jan 10--13, 2022 | U.S.--Russia and NATO--Russia talks collapse without progress                 | Removes peaceful resolution path; posterior moves toward H1     |
+| Jan 14, 2022     | Ukraine suffers major cyberattack (attributed to Russia)                      | Gray zone escalation; supports H1 and H2                        |
+| Jan 18, 2022     | Russian troops begin arriving in Belarus for "exercises"                      | Expands invasion axes; increases likelihood under H1            |
+| Jan 25, 2022     | U.S. and NATO formally reject Russia's security proposals                     | Triggers rhetorical escalation; diplomacy effectively dead      |
+| Feb 10--20, 2022 | Russia--Belarus joint military exercises near Ukrainian border                | Pre-positioning for multi-front attack                          |
+| Feb 15--16, 2022 | Russia announces some troop withdrawals (but U.S. says false)                 | Conflicting signals; short-term belief in H2 may briefly rise   |
+| Feb 17, 2022     | Sharp increase in shelling in Donbas (blamed on Ukraine by Russia)            | Proxy provocation; tactical signal under H1                     |
+| Feb 21, 2022     | Putin recognizes Donetsk & Luhansk "independence" and sends in "peacekeepers" | De facto invasion begins; major update toward certainty of H1   |
+| Feb 24, 2022     | Full-scale invasion of Ukraine begins                                         | Event confirmed; H1 = 1; H2 and H3 collapse                     |
+
+### 🔄 Using This Timeline for Bayesian Updating
+
+-   Treat each row as a new **evidence ( E_t )**\
+-   Estimate how likely each event is under competing hypotheses:
+    -   $( H_1 )$: Russia will invade\
+    -   $( H_2 )$: Russia will escalate without invasion\
+    -   $( H_3 )$: Russia will de-escalate\
+-   Use Bayes' Rule to update your belief at each step:
+
+$$
+P(H_i \mid E_t) = \frac{P(H_i) \cdot P(E_t \mid H_i)}{\sum_j P(H_j) \cdot P(E_t \mid H_j)}
+$$
+
+The timeline above is one way to structure your priors and likelihoods in a transparent, iterative way.
+:::
+
+## 🔄 Sequential Update: Early 2022
+
+By **January 2022**, the situation had evolved further.
+
+You observe a second body of evidence $( E_2 )$:
+
+-   Russia moves even more armored divisions forward\
+-   Belarus hosts joint military exercises\
+-   Russian media prepares the domestic population\
+
+Taking this together as one body of new evidence, this constitutes a **strong signal of escalation**. We now reassess the likelihoods under each hypothesis.
+
+### Updated Inputs
+
+#### The Prior
+
+Your **prior** for this second round is the **posterior from the first update**:
+
+$$
+\begin{aligned}
+P(H_1) &= 0.429 \\
+P(H_2) &= 0.536 \\
+P(H_3) &= 0.036 \\
+\end{aligned}
+$$
+
+#### The Likelihood
+
+You now estimate how likely the new data $( E_2 )$ would be under each hypothesis:
+
+$$
+\begin{aligned}
+P(E_2 \mid H_1) &= 0.85 \text{ Strong signal of imminent invasion.}\\
+P(E_2 \mid H_2) &= 0.50 \text{ Strong risk of miscalculation if simply signalling.}\\
+P(E_2 \mid H_3) &= 0.05 \text{ Now very unlikely.}\\
+\end{aligned}
+$$
+
+### 🧮 Bayes' Rule Again
+
+Note the sequential updating.
+
+```{=tex}
+\begin{aligned}
+\text{First update:} \quad 
+P(H_i \mid E_1) &= \frac{P(H_i) \cdot P(E_1 \mid H_i)}{\sum_j P(H_j) \cdot P(E_1 \mid H_j)} \\[1em]
+
+\text{Second update:} \quad 
+P(H_i \mid E_1, E_2) &= \frac{P(H_i \mid E_1) \cdot P(E_2 \mid H_i)}{\sum_j P(H_j \mid E_1) \cdot P(E_2 \mid H_j)}
+\end{aligned}
+```
+### Numerator Calculations:
+
+$$
+\begin{aligned}
+P(H_1) \cdot P(E_2 \mid H_1) &= 0.429 \times 0.85 = 0.36465 \\
+P(H_2) \cdot P(E_2 \mid H_2) &= 0.536 \times 0.50 = 0.26800 \\
+P(H_3) \cdot P(E_2 \mid H_3) &= 0.036 \times 0.05 = 0.00180 \\
+\end{aligned}
+$$
+
+### Denominator (Normalization Constant):
+
+$$
+P(E_2) = 0.36465 + 0.26800 + 0.00180 = 0.63445
+$$
+
+### ✅ Updated Posterior Probabilities:
+
+$$
+\begin{aligned}
+P(H_1 \mid E_2) &= \frac{0.36465}{0.63445} \approx 0.5747 \\
+P(H_2 \mid E_2) &= \frac{0.26800}{0.63445} \approx 0.4223 \\
+P(H_3 \mid E_2) &= \frac{0.00180}{0.63445} \approx 0.0028 \\
+\end{aligned}
+$$
+
+::: {.callout-important collapse="true" title="Why We Always Include a Prior"}
+Every Bayesian analysis begins with a **prior** --- your belief or baseline estimate before seeing new data. This isn't a technicality; it's fundamental to rational inference.
+
+If you focus only on new evidence and ignore the prior, you risk **overreacting** to noisy or ambiguous signals. Without anchoring to a baseline, your belief can swing wildly with each new data point --- a kind of **whiplash effect** in your reasoning.
+
+In geopolitical risk, this is especially dangerous. For example, troop movements may look alarming, but if historical data shows many similar buildups ended without conflict, then the *prior probability of invasion* should remain low --- until the evidence becomes strong enough to warrant an update.
+
+Incorporating the prior ensures:
+
+-   **Stability**: updates are proportional, not impulsive\
+-   **Transparency**: your assumptions are visible and testable\
+-   **Context**: new evidence is interpreted relative to what's already known
+
+The prior doesn't bias the analysis --- it **grounds** it.
+:::
+
+### Let's visualize where we are
+
+```{mermaid}
+flowchart LR
+  A{{"Subsequent State"}}
+
+  %% Stage: Priors (from first update)
+  B("P(Invasion) = 0.429")
+  C("P(Brinksmanship) = 0.536")
+  D("P(De-escalation) = 0.036")
+
+  %% Stage: New Likelihoods (E₂)
+  B --> E("P(E₂ | Invasion) = 0.85")
+  C --> F("P(E₂ | Brinksmanship) = 0.5")
+  D --> G("P(E₂ | De-escalation) = 0.05")
+
+  %% Stage: Updated Posteriors
+  E --> H("P(Invasion | E₂) = (0.429 × 0.85) / 0.63445 ≈ 0.575")
+  F --> I("P(Brinksmanship | E₂) = (0.536 × 0.5) / 0.63445 ≈ 0.422")
+  G --> J("P(De-escalation | E₂) = (0.036 × 0.05) / 0.63445 ≈ 0.003")
+
+  %% Connect root to priors
+  A --> B
+  A --> C
+  A --> D
+```
+
+### Interpretation
+
+After the second round of evidence:
+
+-   The belief in **invasion** climbs to **57%**\
+-   **Tension without invasion** is now less likely, at **42%**\
+-   **De-escalation** is nearly ruled out at **0.3%**
+
+The probability of war is no longer just plausible --- it's approaching **probable**.
+
+This is how Bayes allows us to **track changing odds in real time**, rather than overreacting or sticking rigidly to outdated assumptions.
+
+::: {.callout-note title="Key Takeaways"}
+-   Bayesian reasoning provides a structured way to update beliefs as new evidence arrives.
+-   The prior grounds your estimate in historical context or baseline judgment.
+-   Likelihoods reflect how well the evidence fits each hypothesis --- but only when compared across competing hypotheses.
+-   The posterior is not a guess --- it's a **disciplined update** of your belief.
+-   This method is especially powerful for rare, ambiguous, and high-stakes geopolitical events.
+:::
+
+################# 
+
+#### The Normalizing Constant (Denominator)
+
+The denominator is the scope or context of the research question. It ensures beliefs are updated relative to the universe of plausible alternatives, not in isolation. While quantitative analysts may later simplify this step, I find it pedagogically useful to retain the full expression, especially in an analytical setting.
+
+## Posterior Calculation (Applying Bayes' Rule)
+
+To evaluate our first hypothesis, the framework is:
+
+$$
+\begin{aligned}
+P(E) &= \sum_{j=1}^{3} P(H_j) \cdot P(E \mid H_j) \\
+     &= P(H_1) \cdot P(E \mid H_1) + P(H_2) \cdot P(E \mid H_2) + P(H_3) \cdot P(E \mid H_3)
+\end{aligned}
+$$
+
+::: {.callout-caution title="Isn’t Assigning Numbers a False Precision?"}
+It's a fair question --- and a common critique.
+
+Bayesian analysis does **not** claim that these numbers are objectively true or uniquely correct. Instead, it forces us to **be explicit about our assumptions**.
+
+Assigning probabilities isn't about claiming certainty --- it's about creating a transparent, testable framework for reasoning under uncertainty. Even rough or subjective probabilities are better than vague intuition, because they can be:
+
+-   Challenged\
+-   Updated\
+-   Compared
+
+Crucially, assigning numbers helps ensure our reasoning is **logically consistent**. It prevents us from believing contradictory things or shifting our judgments arbitrarily --- especially when stakes are high or evidence is ambiguous. Quantification creates a structure that reveals when our beliefs are out of sync with our own logic.
+
+In fact, the point of Bayesian reasoning is not to pretend we know the answer --- it's to **expose our reasoning** and **show how it changes** as new information arrives.
+
+This isn't precision for its own sake. It's accountability for your beliefs.
+:::
