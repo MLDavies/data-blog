@@ -1,6 +1,7 @@
 ---
 title: "Parametric Survival Analysis: UN Peacekeeping Missions"
 # subtitle: "Maximum Likelihood Estimation"
+slug: peacekeeping
 author: "Michael L. Davies"
 date: "Aug 08, 2023"
 #format: docx
@@ -25,6 +26,7 @@ execute:
   message: false
   error: false
   echo: true
+draft: true
 ---
 
 ## War-type and peacekeeping mission duration
@@ -51,12 +53,10 @@ I grabbed a happy snap of how these models were summarized on the white board. I
 
 ![](survivalmodels_crop.jpg)
 
-- PH: Proportional hazards 
-- AFT: Accelerated Failure time
-
+-   PH: Proportional hazards
+-   AFT: Accelerated Failure time
 
 In short/general, we can say that Kaplan-Meier estimation provides descriptive survival information, while the catalog of parametric models and Cox models offer more advanced statistical analysis of survival data, allowing for hypothesis testing and the examination of covariate effects. They can be used together to provide a comprehensive understanding of survival patterns and relationships.
-
 
 ```{mermaid}
 %%| fig-width: 6.5
@@ -518,7 +518,7 @@ plt.show();
 Estimate a Cox model and interpret the coefficient estimates.
 :::
 
-::: panel-tabset
+:::: panel-tabset
 # R Solution
 
 <!-- https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html#The_Cox_regression_model -->
@@ -636,7 +636,7 @@ library(reticulate)
 py$py_mod_metric %>% 
   knitr::kable()
 ```
-:::
+::::
 
 ## Consequences of an incorrect distribution
 
@@ -649,5 +649,3 @@ Understand the consequences of estimating a parametric survival model with an in
 In short, the suitability of any distribution for your data depends on how well it fits the underlying data-generating process.
 
 Before implementing a model, we must give thought to the data generating process or the underlying mechanism or model that generates the observed data. We represent these processes through distributions--and the respective distributional parameters. Using an incorrect parametric distribution (Weibull for instance) when the true distribution is Gamma can result in biased parameter estimates, poor model fit, and inaccurate survival predictions (among other things) because the respective distribution parameters (shape and scale) are significantly different.
-
-

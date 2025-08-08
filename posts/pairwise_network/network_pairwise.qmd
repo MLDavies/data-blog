@@ -1,5 +1,6 @@
 ---
 title: "Insurgent (Pairwise) Networks"
+slug: pairwise-network
 date: "Aug 22, 2022"
 categories: [network analysis, R, combat]
 description: "Conflict makes for strange bedfellows"

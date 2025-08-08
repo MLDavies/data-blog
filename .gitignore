@@ -1,3 +1,4 @@
+# R / RStudio
 .Rproj.user
 .Rhistory
 .RData
@@ -7,3 +8,14 @@
 .Rdata
 .httr-oauth
 .DS_Store
+
+# Quarto build output
+_site/
+_freeze/
+**/*_files/
+*.knit.md
+*.utf8.md
+
+# renv (installed libs)
+renv/library/
+
