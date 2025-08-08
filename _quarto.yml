@@ -3,23 +3,34 @@ project:
 
 website:
   title: "Michael L. Davies"
+  site-url: "https://michael-davies.netlify.app/"
   navbar:
-    #background: "#dbdbdb"
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Blog"
+        href: blog.qmd
     right:
-      - href: blog.qmd
       - icon: github
         href: https://github.com/MLDavies/
       - icon: twitter
         href: https://twitter.com/Michael82719108
       - icon: envelope
         href: mailto:michael.l.davies@gmail.com
+  search: true
+
 format:
   html:
-    theme: flatly  # ember.scss
+    theme: flatly
     css: styles.css
+    #self-contained: true
 
 editor: visual
 
 comments:
   giscus:
     repo: MLDavies/data-blog
+
+# Optional but handy:
+execute:
+  freeze: auto

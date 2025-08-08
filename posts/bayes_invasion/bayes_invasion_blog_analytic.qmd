@@ -1,13 +1,14 @@
 ---
 title: "Bayes and the Battlefield"
 subtitle: "Reasoning Under Uncertainty"
+slug: "bayes-analytic-invasion"
 author: "Michael L. Davies"
 date: "July 27, 2025"
 categories: [bayes, war, forecasting, risk-analysis, probability]
 format:
   html:
     theme: flatly  # or another valid theme like "cosmo", "journal", etc.
-    self-contained: true
+    
     #math: mathjax
     mermaid:
       theme: neutral
@@ -127,15 +128,13 @@ $$
 
 This is **Bayes' Theorem**. It allows you to reason backward---from a known likelihood $P(B \mid A)$ and prior $P(A)$, to an updated belief $P(A \mid B)$.
 
-
-
 ## 🔁 Summary Visual Mapping
 
-| Concept                 | Equation                                            | Visual Idea                                     |
-|------------------|-------------------------------|-----------------------|
-| Conditional Probability | $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$            | What portion of $B$ also satisfies $A$          |
-| Joint from Conditional  | $P(A \cap B) = P(B \mid A) \cdot P(A)$              | Flip the lens: assume $A$ first                 |
-| Bayes' Theorem          | $P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$ | Invert the condition using prior and likelihood |
+| Concept | Equation | Visual Idea |
+|-------------------|------------------------------|-----------------------|
+| Conditional Probability | $P(A \mid B) = \frac{P(A \cap B)}{P(B)}$ | What portion of $B$ also satisfies $A$ |
+| Joint from Conditional | $P(A \cap B) = P(B \mid A) \cdot P(A)$ | Flip the lens: assume $A$ first |
+| Bayes' Theorem | $P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)}$ | Invert the condition using prior and likelihood |
 :::
 
 With some rearranging and substitution, we get **Bayes' Theorem**. Stating Bayes' Rule in plain terms and more formally:
@@ -319,21 +318,21 @@ Each event serves as a potential data point $( E_t )$ in a sequential Bayesian u
 
 ### 📅 Significant Events Prior to Russia's Full-Scale Invasion
 
-| Date             | Event Description                                                             | Potential Bayesian Impact                                       |
-|------------------|------------------------------|------------------------|
-| Apr--May 2021    | First major Russian troop buildup near Ukraine border                         | Early warning; raises baseline invasion probability             |
-| Nov 10, 2021     | U.S. satellite imagery confirms renewed Russian troop buildup                 | Evidence of sustained planning; updates likelihood for invasion |
-| Dec 7, 2021      | Biden--Putin virtual summit; Biden warns of sanctions                         | Diplomatic signaling; some chance for deterrence                |
-| Dec 17, 2021     | Russia issues sweeping security demands to NATO and U.S.                      | Raises stakes; suggests maximalist aims                         |
-| Jan 10--13, 2022 | U.S.--Russia and NATO--Russia talks collapse without progress                 | Removes peaceful resolution path; posterior moves toward H1     |
-| Jan 14, 2022     | Ukraine suffers major cyberattack (attributed to Russia)                      | Gray zone escalation; supports H1 and H2                        |
-| Jan 18, 2022     | Russian troops begin arriving in Belarus for "exercises"                      | Expands invasion axes; increases likelihood under H1            |
-| Jan 25, 2022     | U.S. and NATO formally reject Russia's security proposals                     | Triggers rhetorical escalation; diplomacy effectively dead      |
-| Feb 10--20, 2022 | Russia--Belarus joint military exercises near Ukrainian border                | Pre-positioning for multi-front attack                          |
-| Feb 15--16, 2022 | Russia announces some troop withdrawals (but U.S. says false)                 | Conflicting signals; short-term belief in H2 may briefly rise   |
-| Feb 17, 2022     | Sharp increase in shelling in Donbas (blamed on Ukraine by Russia)            | Proxy provocation; tactical signal under H1                     |
-| Feb 21, 2022     | Putin recognizes Donetsk & Luhansk "independence" and sends in "peacekeepers" | De facto invasion begins; major update toward certainty of H1   |
-| Feb 24, 2022     | Full-scale invasion of Ukraine begins                                         | Event confirmed; H1 = 1; H2 and H3 collapse                     |
+| Date | Event Description | Potential Bayesian Impact |
+|-------------------|-----------------------------|------------------------|
+| Apr--May 2021 | First major Russian troop buildup near Ukraine border | Early warning; raises baseline invasion probability |
+| Nov 10, 2021 | U.S. satellite imagery confirms renewed Russian troop buildup | Evidence of sustained planning; updates likelihood for invasion |
+| Dec 7, 2021 | Biden--Putin virtual summit; Biden warns of sanctions | Diplomatic signaling; some chance for deterrence |
+| Dec 17, 2021 | Russia issues sweeping security demands to NATO and U.S. | Raises stakes; suggests maximalist aims |
+| Jan 10--13, 2022 | U.S.--Russia and NATO--Russia talks collapse without progress | Removes peaceful resolution path; posterior moves toward H1 |
+| Jan 14, 2022 | Ukraine suffers major cyberattack (attributed to Russia) | Gray zone escalation; supports H1 and H2 |
+| Jan 18, 2022 | Russian troops begin arriving in Belarus for "exercises" | Expands invasion axes; increases likelihood under H1 |
+| Jan 25, 2022 | U.S. and NATO formally reject Russia's security proposals | Triggers rhetorical escalation; diplomacy effectively dead |
+| Feb 10--20, 2022 | Russia--Belarus joint military exercises near Ukrainian border | Pre-positioning for multi-front attack |
+| Feb 15--16, 2022 | Russia announces some troop withdrawals (but U.S. says false) | Conflicting signals; short-term belief in H2 may briefly rise |
+| Feb 17, 2022 | Sharp increase in shelling in Donbas (blamed on Ukraine by Russia) | Proxy provocation; tactical signal under H1 |
+| Feb 21, 2022 | Putin recognizes Donetsk & Luhansk "independence" and sends in "peacekeepers" | De facto invasion begins; major update toward certainty of H1 |
+| Feb 24, 2022 | Full-scale invasion of Ukraine begins | Event confirmed; H1 = 1; H2 and H3 collapse |
 
 ### 🔄 Using This Timeline for Bayesian Updating
 
@@ -393,7 +392,6 @@ $$
 
 Note the sequential updating.
 
-```{=tex}
 \begin{aligned}
 \text{First update:} \quad 
 P(H_i \mid E_1) &= \frac{P(H_i) \cdot P(E_1 \mid H_i)}{\sum_j P(H_j) \cdot P(E_1 \mid H_j)} \\[1em]
@@ -401,7 +399,7 @@ P(H_i \mid E_1) &= \frac{P(H_i) \cdot P(E_1 \mid H_i)}{\sum_j P(H_j) \cdot P(E_1
 \text{Second update:} \quad 
 P(H_i \mid E_1, E_2) &= \frac{P(H_i \mid E_1) \cdot P(E_2 \mid H_i)}{\sum_j P(H_j \mid E_1) \cdot P(E_2 \mid H_j)}
 \end{aligned}
-```
+
 ### Numerator Calculations:
 
 $$
