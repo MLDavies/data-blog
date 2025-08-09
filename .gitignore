@@ -22,3 +22,8 @@ renv/library/
 # Node.js
 node_modules/
 
+
+# Quarto portable artifacts
+quarto-*-linux-amd64.tar.gz
+quarto-*-linux-amd64/
+quarto-*/
