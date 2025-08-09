@@ -27,3 +27,7 @@ node_modules/
 quarto-*-linux-amd64.tar.gz
 quarto-*-linux-amd64/
 quarto-*/
+
+# ignore local Quarto bundles
+quarto-*/
+*.tar.gz
