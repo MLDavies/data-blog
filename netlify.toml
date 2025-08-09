@@ -1,12 +1,9 @@
 # netlify.toml
 [build]
-  command = "quarto render"
+  # First install Quarto (your script), then build the site
+  command = ".netlify/install-quarto.sh && quarto render"
   publish = "_site"
 
-# Install Quarto automatically
-[[plugins]]
-  package = "netlify-plugin-quarto"
-
 [build.environment]
-  # Pin (optional): pick a recent version you’re using locally
-  QUARTO_VERSION = "1.5.57"
+  # Not strictly required since the script hardcodes 1.6.42, but fine to keep
+  QUARTO_VERSION = "1.6.42"
