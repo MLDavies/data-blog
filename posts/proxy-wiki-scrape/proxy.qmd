@@ -97,7 +97,7 @@ proxy_data_df <-
   mutate(across(
     start_year:end_year,
     ~ str_extract(.x, '[0-9]{4}') %>% 
-    as.numeric(.x))) %>% 
+      as.numeric(.x))) %>% 
   mutate(across(
     c(war, combatant_1, combatant_1, result),
     ~ str_remove(., "\\[.*\\]$")))
@@ -116,39 +116,43 @@ To avoid rewriting a bunch of code, let's create a little function to select the
 
 # a function to select war type and plot
 war_plot <- function(df, type) {
+  df2 <- df |>
+    dplyr::filter(
+      war_type == type, 
+      !is.na(start_year)) |>
+    dplyr::mutate(
+      # one ordered factor for plotting; drop unused levels
+      war_ord = forcats::fct_drop(forcats::fct_reorder(
+        war, 
+        -start_year, 
+        .na_rm = TRUE)),
+      # if end_year is missing, use start_year so segment has zero length (still draws)
+      end_year = dplyr::coalesce(
+        end_year, 
+        start_year)
+    )
   
-  df %>% 
-    filter(
-      war_type == type
-    ) %>% 
-    ggplot(aes(
-      x = fct_reorder(war, -start_year),
-      y = start_year)) +
-    geom_segment(aes(
-      xend = war, 
-      yend = end_year), 
-      color = "cadetblue",
-      alpha = 0.75) +
-    # year start
-    geom_point(color = "orange", # #E69F00
-               size = 3,
-               alpha = 0.8) +
-    # year end
-    geom_point(aes(
-      y = end_year), 
-      color = "cadetblue", 
-      size = 3,
-      alpha = 0.8) +  
-    
+  df2 |> ggplot(aes(x = war_ord, 
+                    y = start_year)) +
+    geom_segment(aes(xend = war_ord, 
+                     yend = end_year),
+                 color = "cadetblue", 
+                 alpha = 0.75
+    ) +
+    geom_point(size = 3, 
+               alpha = 0.8, 
+               color = "orange") +
+    geom_point(aes(y = end_year), 
+               size = 3, 
+               alpha = 0.8, 
+               color = "cadetblue") +
     coord_flip() +
-    labs(
-      x = "", 
-      y = "",
-      title = type
-      ) +
-    # a sourced function for some trivial formatting 
+    labs(x = NULL, 
+         y = NULL, 
+         title = type) +
     quick_gg_theme()
 }
+
 ```
 
 ```{r}
