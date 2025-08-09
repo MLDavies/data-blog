@@ -1,0 +1,23 @@
+{
+  "name": "data-blog",
+  "version": "1.0.0",
+  "description": "Welcome to my data science-sandbox. I come here to play and explore data, quantitative methods, and the intersections among society, the arts, and conflict. I’ve always been intrigued by the complex dynamics and passions of society, and this blog is a platform for exploring all that through the lens of data science.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MLDavies/data-blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MLDavies/data-blog/issues"
+  },
+  "homepage": "https://github.com/MLDavies/data-blog#readme",
+  "devDependencies": {
+    "netlify-plugin-quarto": "^0.0.4"
+  }
+}

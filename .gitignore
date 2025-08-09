@@ -19,3 +19,6 @@ _freeze/
 # renv (installed libs)
 renv/library/
 
+# Node.js
+node_modules/
+
