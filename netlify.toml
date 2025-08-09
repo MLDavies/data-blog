@@ -1,0 +1,12 @@
+# netlify.toml
+[build]
+  command = "quarto render"
+  publish = "_site"
+
+# Install Quarto automatically
+[[plugins]]
+  package = "netlify-plugin-quarto"
+
+[build.environment]
+  # Pin (optional): pick a recent version you’re using locally
+  QUARTO_VERSION = "1.5.57"
