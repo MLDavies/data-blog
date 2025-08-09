@@ -26,7 +26,6 @@ execute:
   message: false
   error: false
   echo: true
-draft: true
 ---
 
 ## War-type and peacekeeping mission duration

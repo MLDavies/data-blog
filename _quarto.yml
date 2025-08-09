@@ -1,10 +1,5 @@
 project:
   type: website
-  render:
-    - index.qmd
-    - blog.qmd
-    - posts/bayes_invasion/bayes_invasion_blog_analytic.qmd
-
 
 website:
   title: "Michael L. Davies"
